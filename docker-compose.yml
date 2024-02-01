@@ -1,0 +1,51 @@
+---
+x-defaults: &defaults
+  env_file:
+    - ./config/tuoni.env
+  restart: unless-stopped
+  extra_hosts:
+    - host.docker.internal:host-gateway
+    - local-c2:host-gateway
+  logging:
+    driver: json-file
+    options:
+      max-size: 250m
+      max-file: "1"
+
+services:
+  tuoni-server:
+    <<: *defaults
+    profiles: ['app', 'server']
+    container_name: tuoni-server
+    hostname: tuoni-server
+    image: ghcr.io/shell-dot/tuoni/server:${VERSION}
+    volumes:
+      - ./data/:/app/data/
+      - ./logs/:/app/logs/
+      - ./agent-templates/:/app/agent-templates/:ro
+      - ./config/tuoni.yml:/app/tuoni-production.yml:ro
+      - ./ssl/server/server-selfsigned.keystore:/app/ssl/selfsigned.keystore:ro
+      - ./ssl/server/server-private.pem:/app/prod-private.pem:ro
+      - ./ssl/server/server-public.pem:/app/prod-public.pem:ro
+    network_mode: host
+
+  tuoni-client:
+    <<: *defaults
+    profiles: ['app', 'client']
+    container_name: tuoni-client
+    hostname: tuoni-client
+    image: ghcr.io/shell-dot/tuoni/client:${VERSION}
+    user: 1000:100
+
+  tuoni-client-nginx:
+    <<: *defaults
+    profiles: ['app', 'client', 'client-nginx']
+    container_name: tuoni-client-nginx
+    hostname: tuoni-client-nginx
+    image: nginx:latest
+    ports:
+      - "12702:443"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./ssl/client/client.crt:/etc/nginx/certs/tuoni.crt:ro
+      - ./ssl/client/client-private.pem:/etc/nginx/certs/tuoni.key:ro

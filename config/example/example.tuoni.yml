@@ -1,0 +1,39 @@
+---
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-alias: selfsigned
+    key-store: ssl/selfsigned.keystore
+    key-store-type: jks
+    key-store-password: selfsigned
+    key-password: selfsigned
+
+tuoni:
+  data-dir: ./data
+  custom-agent-template-dir: ./agent-templates
+
+  auth:
+    credentials:
+      username: _credentials_placeholder_username_
+      password: _credentials_placeholder_password_
+    jwt:
+      expiry-seconds: 86400
+      private-key: file:./prod-private.pem
+      public-key: file:./prod-public.pem
+
+logging:
+  file:
+    name: ./logs/tuoni-server.log
+  threshold:
+    console: INFO
+    file: DEBUG
+  level:
+    com.shelldot.tuoni: debug
+    root: info
+  logback:
+    rollingpolicy:
+      clean-history-on-start: true
+      max-file-size: 10MB
+      max-history: 30
+      total-size-cap: 1GB

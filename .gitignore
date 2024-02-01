@@ -1,0 +1,12 @@
+/.idea
+/config/tuoni.env
+/config/tuoni.yml
+/ssl/client/client.crt
+/ssl/client/client-private.pem
+/ssl/server/server.pem
+/ssl/server/server-public.pem
+/ssl/server/server-private.pem
+/ssl/server/server-selfsigned.keystore
+/data/
+/logs/
+/agent-templates/

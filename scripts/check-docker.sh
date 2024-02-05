@@ -33,6 +33,12 @@ fi
 
 # Correct the condition to exit if both Docker and Docker Compose versions are OK
 if [ "$docker_version_ok" -eq 1 ] && [ "$docker_compose_version_ok" -eq 1 ]; then
+  # Check if the Docker service is running and start it if not
+  if ! ${SUDO_COMMAND} systemctl is-active --quiet docker; then
+    echo "INFO | Docker service is not running. Starting Docker service..."
+    ${SUDO_COMMAND} systemctl start docker
+    echo "INFO | Docker service started."
+  fi
   #echo "INFO | Docker and Docker Compose meet the required version. Exiting the installation script."
   return;
 fi
@@ -53,7 +59,7 @@ else
     exit 1
   fi
   # Remove all docker related packages, from docker docs
-  for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do ${SUDO_COMMAND} apt-get remove $pkg; done
+  for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do ${SUDO_COMMAND} apt-get remove -y $pkg; done
 fi
 
 echo "INFO | Docker installation ..."

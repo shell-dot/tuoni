@@ -25,7 +25,7 @@ Tuoni is a sophisticated, cross-platform red teaming framework designed to enhan
 
 ## Installation
 ```bash
-wget  -O - https://raw.githubusercontent.com/shell-dot/tuoni/main/scripts/setup.sh | bash
+wget  -O - https://tuoni.sh | bash
 cd tuoni
 ```
 

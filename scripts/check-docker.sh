@@ -52,7 +52,7 @@ else
   echo "INFO | Docker version: $installed_docker_version, required version: 25.0.0"
   echo "INFO | Docker Compose version: $installed_compose_version, required version: 2.0.0"
   echo "INFO | Before installing new packages, the setup will first remove any existing Docker-related packages if found:"
-  ECHO "       docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc"
+  echo "       docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc"
   read -p "Do you want to proceed with the installation? (y/N): " -n 1 -r
   echo    # (optional) move to a new line
   if [[ ! $REPLY =~ ^[Yy]$ ]]; then

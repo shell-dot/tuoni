@@ -59,7 +59,10 @@ else
     echo "INFO | Installation aborted by the user."
     exit 1
   fi
-  # Remove all docker related packages, from docker docs
+
+  ${SUDO_COMMAND} systemctl stop docker --quiet
+  ${SUDO_COMMAND} systemctl disable docker --quiet
+  # Remove all docker related packages, list taken from docker docs
   for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do ${SUDO_COMMAND} apt-get remove -y $pkg; done
 fi
 

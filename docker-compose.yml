@@ -6,6 +6,7 @@ x-defaults: &defaults
   extra_hosts:
     - host.docker.internal:host-gateway
     - local-c2:host-gateway
+    - ${DOCKER_HOST_FQDN}:host-gateway
   logging:
     driver: json-file
     options:
@@ -15,7 +16,7 @@ x-defaults: &defaults
 services:
   tuoni-server:
     <<: *defaults
-    profiles: ['app', 'server']
+    profiles: ["app", "server"]
     container_name: tuoni-server
     hostname: tuoni-server
     image: ghcr.io/shell-dot/tuoni/server:${VERSION}
@@ -31,7 +32,7 @@ services:
 
   tuoni-client:
     <<: *defaults
-    profiles: ['app', 'client']
+    profiles: ["app", "client"]
     container_name: tuoni-client
     hostname: tuoni-client
     image: ghcr.io/shell-dot/tuoni/client:${VERSION}
@@ -39,7 +40,7 @@ services:
 
   tuoni-client-nginx:
     <<: *defaults
-    profiles: ['app', 'client', 'client-nginx']
+    profiles: ["app", "client", "client-nginx"]
     container_name: tuoni-client-nginx
     hostname: tuoni-client-nginx
     image: nginx:latest

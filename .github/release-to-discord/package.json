@@ -1,0 +1,12 @@
+{
+  "name": "releases-to-discord",
+  "version": "0.0.1",
+  "description": "Send a message to a Discord webhook when a new release is published on GitHub",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "@actions/core": "^1.9.1",
+    "@actions/github": "^5.0.3",
+    "node-fetch": "^3.2.10"
+  }
+}

@@ -1,4 +1,5 @@
 /.idea
+/.github/release-to-discord/node_modules
 /config/tuoni.env
 /config/tuoni.yml
 /ssl/client/client.crt

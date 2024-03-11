@@ -12,7 +12,7 @@
   <br />
 <h1>Tuoni</h1>
 
-![Discord Shield](https://discordapp.com/api/guilds/1215648074681294918/widget.png?style=shield)
+[![tuoni.io discord](https://discordapp.com/api/guilds/1215648074681294918/widget.png?style=shield)](https://discord.gg/fd8caSs8Vj)
 
 
   

@@ -12,6 +12,9 @@
   <br />
 <h1>Tuoni</h1>
 
+![Discord Shield](https://discordapp.com/api/guilds/1215648074681294918/widget.png?style=shield)
+
+
   
 <i align="center">
 Tuoni is a sophisticated, cross-platform red teaming framework designed to enhance cybersecurity education and training through large-scale cyber defense exercises. Developed using Java for robustness, Docker for versatility, and featuring an intuitive web browser interface, it supports and streamlines cyber exercises. With its modular, extendable plugin system, Tuoni offers Red Teamers the flexibility to tailor its capabilities for specific educational and exercise needs. Its user-friendly interface facilitates easy operation and efficient reporting, essential in training environments. Tuoni embodies a commitment to power, adaptability, and collaboration, aimed at empowering Red Teamers with a tool that meets the dynamic demands of modern cyber defense education.

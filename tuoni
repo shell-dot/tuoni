@@ -1,13 +1,15 @@
 #!/bin/bash
 
-. ./scripts/_init.sh
-. ./scripts/check-os.sh
-. ./scripts/check-packages.sh
-. ./scripts/check-docker.sh
-. ./scripts/check-configuration.sh
-. ./scripts/check-autocomplete.sh
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+. $SCRIPT_DIR/scripts/_init.sh
+. $PROJECT_ROOT/scripts/check-os.sh
+. $PROJECT_ROOT/scripts/check-packages.sh
+. $PROJECT_ROOT/scripts/check-docker.sh
+. $PROJECT_ROOT/scripts/check-configuration.sh
+. $PROJECT_ROOT/scripts/check-autocomplete.sh
 ### include env variables
-. ./config/tuoni.env
+. $PROJECT_ROOT/config/tuoni.env
 
 ### full app
-. ./scripts/tuoni-command.sh $1
+. $PROJECT_ROOT/scripts/tuoni-command.sh $1

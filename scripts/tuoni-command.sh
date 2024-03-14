@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ### include env variables
-. ./config/tuoni.env
-. ./scripts/_init.sh
+. $PROJECT_ROOT/config/tuoni.env
+. $PROJECT_ROOT/scripts/_init.sh
 
 TUONI_DOCKER_COMPOSE_COMMAND="docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml"
 
@@ -47,11 +47,11 @@ fi
 echo "TUONI ${TUONI_COMPONENT^^} running command: $1"
 
 if [ "$1" == "clean-configuration" ]; then
-  . ./scripts/clean-configuration.sh
+  . $PROJECT_ROOT/scripts/clean-configuration.sh
 fi
 
 if [ "$1" == "update" ]; then
-  . ./scripts/update.sh
+  . $PROJECT_ROOT/scripts/update.sh
 fi
 
 

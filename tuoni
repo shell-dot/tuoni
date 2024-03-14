@@ -5,6 +5,7 @@
 . ./scripts/check-packages.sh
 . ./scripts/check-docker.sh
 . ./scripts/check-configuration.sh
+. ./scripts/check-autocomplete.sh
 ### include env variables
 . ./config/tuoni.env
 

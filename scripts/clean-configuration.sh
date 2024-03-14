@@ -50,8 +50,8 @@ case "$response" in
         ;;
 esac
 
-ENV_PATH="./config/tuoni.env"
-CONFIG_PATH="./config/tuoni.yml"
+ENV_PATH="$PROJECT_ROOT/config/tuoni.env"
+CONFIG_PATH="$PROJECT_ROOT/config/tuoni.yml"
 
 ${SUDO_COMMAND} docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml down -v --rmi all --remove-orphans
 echo "INFO | Docker containers stopped and removed"
@@ -61,12 +61,12 @@ if [[ ${choices[0]} ]]; then
   rm ${CONFIG_PATH} || true
 fi
 
-if [[ ${choices[1]} ]]; then rm -rf ./data/* || true; fi
-if [[ ${choices[2]} ]]; then rm -rf ./logs/* || true; fi
-if [[ ${choices[3]} ]]; then rm -rf ./agent-templates/* || true; fi
-if [[ ${choices[4]} ]]; then rm -rf ./ssl/server/* || true; fi
-if [[ ${choices[5]} ]]; then rm -rf ./ssl/client/* || true; fi
+if [[ ${choices[1]} ]]; then rm -rf $PROJECT_ROOT/data/* || true; fi
+if [[ ${choices[2]} ]]; then rm -rf $PROJECT_ROOT/logs/* || true; fi
+if [[ ${choices[3]} ]]; then rm -rf $PROJECT_ROOT/agent-templates/* || true; fi
+if [[ ${choices[4]} ]]; then rm -rf $PROJECT_ROOT/ssl/server/* || true; fi
+if [[ ${choices[5]} ]]; then rm -rf $PROJECT_ROOT/ssl/client/* || true; fi
 
 echo "INFO | Configuration cleaned"
 
-. ./scripts/check-configuration.sh
+. $PROJECT_ROOT/scripts/check-configuration.sh

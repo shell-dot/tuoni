@@ -19,7 +19,7 @@ esac
 echo "INFO | Running update script"
 
 ### update scripts and repo
-git pull
+cd $PROJECT_ROOT && git pull
 
 ### update the image version in env file
 LATEST_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)

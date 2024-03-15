@@ -8,45 +8,43 @@ TUONI_SCRIPT_PATH="$PROJECT_ROOT" # Directory where the tuoni script is located
 COMMENT_TAG="# Tuoni Autocomplete Script"
 PATH_COMMENT_TAG="# Tuoni Script Path"
 
-# Initialize variable to track if the shell is supported
-SUPPORTED_SHELL=false
+# Adjusted INCLUDE_LINE with a runtime existence check
+INCLUDE_LINE="if [ -f \"$TUONI_AUTOCOMPLETE_PATH\" ]; then source \"$TUONI_AUTOCOMPLETE_PATH\"; fi # Tuoni Autocomplete Script"
+PATH_INCLUDE_LINE="export PATH=\"\$PATH:$TUONI_SCRIPT_PATH\" $PATH_COMMENT_TAG"
 
-# Detect the shell and set the appropriate config file and install location
-if [[ $SHELL == */zsh ]]; then
-    # Zsh detected
-    USER_SHELL_CONFIG_FILE="$HOME/.zshrc"
-    SUPPORTED_SHELL=true
-elif [[ $SHELL == */bash ]]; then
-    # Bash detected
-    USER_SHELL_CONFIG_FILE="$HOME/.bashrc"
-    SUPPORTED_SHELL=true
-else
-    echo "WARNING | Unsupported shell. This installer optimally supports Bash and Zsh. Autocomplete installation will be skipped."
-fi
+# Function to update shell configuration file
+update_shell_config() {
+    local config_file="$1"
 
-if [[ "$SUPPORTED_SHELL" = true ]]; then
-    # Prepare the script inclusion line with a comment tag
-    INCLUDE_LINE="source $TUONI_AUTOCOMPLETE_PATH $COMMENT_TAG"
-    PATH_INCLUDE_LINE="export PATH=\"\$PATH:$TUONI_SCRIPT_PATH\" $PATH_COMMENT_TAG"
-
-    # Update or add the autocomplete source line
-    if grep -qF "$COMMENT_TAG" "$USER_SHELL_CONFIG_FILE"; then
-        sed -i "/$COMMENT_TAG/c\\$INCLUDE_LINE" "$USER_SHELL_CONFIG_FILE"
+    # Update or add the autocomplete source line with existence check
+    if grep -qF "$COMMENT_TAG" "$config_file"; then
+        sed -i "/$COMMENT_TAG/c\\$INCLUDE_LINE" "$config_file"
     else
-        echo "$INCLUDE_LINE" >> "$USER_SHELL_CONFIG_FILE"
-        echo "INFO | Autocomplete script installed successfully."
+        echo "$INCLUDE_LINE" >> "$config_file"
+        echo "INFO | Autocomplete script check added to $config_file."
     fi
 
     # Update or add the PATH export line
-    if grep -qF "$PATH_COMMENT_TAG" "$USER_SHELL_CONFIG_FILE"; then
-        sed -i "/$PATH_COMMENT_TAG/c\\$PATH_INCLUDE_LINE" "$USER_SHELL_CONFIG_FILE"
+    if grep -qF "$PATH_COMMENT_TAG" "$config_file"; then
+        sed -i "/$PATH_COMMENT_TAG/c\\$PATH_INCLUDE_LINE" "$config_file"
     else
-        echo "$PATH_INCLUDE_LINE" >> "$USER_SHELL_CONFIG_FILE"
+        echo "$PATH_INCLUDE_LINE" >> "$config_file"
     fi
+}
 
-    if ! which tuoni > /dev/null; then
-        echo "INFO | 'tuoni' command not found in your PATH. To use 'tuoni' from any directory, please restart your shell or source your config file:"
-        echo "         source $USER_SHELL_CONFIG_FILE"
-        echo "INFO | This will activate the autocomplete feature and ensure 'tuoni' can be executed from anywhere."
-    fi
+# Check and update .bashrc if it exists
+if [ -f "$HOME/.bashrc" ]; then
+    update_shell_config "$HOME/.bashrc"
+fi
+
+# Check and update .zshrc if it exists
+if [ -f "$HOME/.zshrc" ]; then
+    update_shell_config "$HOME/.zshrc"
+fi
+
+# Check if the 'tuoni' command is accessible in the PATH
+if ! which tuoni > /dev/null; then
+    echo "WARNING | 'tuoni' command not found in your PATH. To use 'tuoni' from any directory, please restart your shell or source your shell configuration file:"
+    echo "         source ~/.bashrc or source ~/.zshrc"
+    echo "INFO | This will activate the autocomplete feature and ensure 'tuoni' can be executed from anywhere."
 fi

@@ -31,10 +31,15 @@ Tuoni is a sophisticated, cross-platform red teaming framework designed to enhan
 wget  -O - https://tuoni.sh | bash
 cd tuoni
 ```
-
-in the unlikely event of nothing happening, try installing wget first...
+or if you prefer curl
+```
+curl https://tuoni.sh | bash
+cd tuoni
+```
+---
+in the unlikely event of nothing happening, try installing wget or curl first...
 ```bash
-sudo apt-get install -y wget
+sudo apt-get install -y wget curl
 ```
 
 

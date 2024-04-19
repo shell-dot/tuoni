@@ -23,11 +23,12 @@ services:
     volumes:
       - ./data/:/app/data/
       - ./logs/:/app/logs/
-      - ./agent-templates/:/app/agent-templates/:ro
+      - ./payload-templates/:/app/custom-payload-templates/:ro
       - ./config/tuoni.yml:/app/tuoni-production.yml:ro
       - ./ssl/server/server-selfsigned.keystore:/app/ssl/selfsigned.keystore:ro
       - ./ssl/server/server-private.pem:/app/prod-private.pem:ro
       - ./ssl/server/server-public.pem:/app/prod-public.pem:ro
+      - ./plugins/:/app/plugins/:ro
     network_mode: host
 
   tuoni-client:

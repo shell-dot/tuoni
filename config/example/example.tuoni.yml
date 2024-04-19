@@ -11,7 +11,6 @@ server:
 
 tuoni:
   data-dir: ./data
-  custom-agent-template-dir: ./agent-templates
 
   auth:
     credentials:
@@ -21,6 +20,10 @@ tuoni:
       expiry-seconds: 86400
       private-key: file:./prod-private.pem
       public-key: file:./prod-public.pem
+  plugins:
+    "[shelldot.payload.default]":
+      configuration:
+        custom-payload-template-dir: file:./custom-payload-templates/
 
 logging:
   file:

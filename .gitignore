@@ -10,4 +10,5 @@
 /ssl/server/server-selfsigned.keystore
 /data/
 /logs/
-/agent-templates/
+/payload-templates/
+/plugins/

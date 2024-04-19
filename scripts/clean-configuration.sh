@@ -6,9 +6,10 @@ CLEAN_ERROR=" "
 options[0]="config"
 options[1]="data"
 options[2]="logs"
-options[3]="agent-templates"
+options[3]="payload-templates"
 options[4]="ssl/server"
 options[5]="ssl/client"
+options[6]="plugins"
 
 #Clear screen for menu
 clear
@@ -63,9 +64,10 @@ fi
 
 if [[ ${choices[1]} ]]; then rm -rf $PROJECT_ROOT/data/* || true; fi
 if [[ ${choices[2]} ]]; then rm -rf $PROJECT_ROOT/logs/* || true; fi
-if [[ ${choices[3]} ]]; then rm -rf $PROJECT_ROOT/agent-templates/* || true; fi
+if [[ ${choices[3]} ]]; then rm -rf $PROJECT_ROOT/payload-templates/* || true; fi
 if [[ ${choices[4]} ]]; then rm -rf $PROJECT_ROOT/ssl/server/* || true; fi
 if [[ ${choices[5]} ]]; then rm -rf $PROJECT_ROOT/ssl/client/* || true; fi
+if [[ ${choices[6]} ]]; then rm -rf $PROJECT_ROOT/plugins/* || true; fi
 
 echo "INFO | Configuration cleaned"
 

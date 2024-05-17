@@ -20,7 +20,7 @@ update_shell_config() {
     if grep -qF "$COMMENT_TAG" "$config_file"; then
         sed -i "/$COMMENT_TAG/c\\$INCLUDE_LINE" "$config_file"
     else
-        echo "$INCLUDE_LINE" >> "$config_file"
+        echo -e "\n$INCLUDE_LINE" >> "$config_file"
         echo "INFO | Autocomplete script check added to $config_file."
     fi
 

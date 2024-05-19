@@ -12,8 +12,17 @@ if ! command -v "git" &>/dev/null; then
   ${SUDO_COMMAND} apt-get update && ${SUDO_COMMAND} apt-get install git -y
 fi
 
-git clone https://github.com/shell-dot/tuoni.git
+# Check if the tuoni directory exists
+if [ ! -d "/srv/tuoni" ]; then
+  echo "INFO | Cloning tuoni repository into /srv/tuoni ..."
+  cd /srv 
+  ${SUDO_COMMAND} mkdir /srv/tuoni 
+  ${SUDO_COMMAND} chown $USER:$USER /srv/tuoni
+  git clone https://github.com/shell-dot/tuoni.git /srv/tuoni
+else
+  echo "INFO | tuoni directory already exists. Skipping git clone."
+fi
 
-cd tuoni
+cd /srv/tuoni
 
 ./tuoni start

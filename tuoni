@@ -12,4 +12,4 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 . $PROJECT_ROOT/config/tuoni.env
 
 ### full app
-. $PROJECT_ROOT/scripts/tuoni-command.sh $1
+. $PROJECT_ROOT/scripts/tuoni-command.sh $1 $2

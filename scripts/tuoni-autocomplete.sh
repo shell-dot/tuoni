@@ -2,16 +2,20 @@
 
 # Define the function for autocompletion
 _tuoni_commands() {
-    local commands="start stop restart logs clean-configuration update update-silent"
+    local cur prev commands client_commands server_commands
+    commands="help start stop restart logs clean-configuration update update-silent"
+    client_commands="start stop restart logs"
+    server_commands="start stop restart logs"
 
-    if [ -n "$BASH_VERSION" ]; then
-        # Bash: Use COMPREPLY for completion replies
-        COMPREPLY=($(compgen -W "${commands}" -- "${COMP_WORDS[COMP_CWORD]}"))
-    elif [ -n "$ZSH_VERSION" ]; then
-        # Zsh: Directly specify matches for completion
-        local -a matches
-        matches=($(echo ${commands}))
-        _describe -t commands 'tuoni command' matches
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    if [[ ${prev} == "tuoni" ]]; then
+        COMPREPLY=($(compgen -W "${commands} client server" -- "${cur}"))
+    elif [[ ${COMP_WORDS[1]} == "client" ]]; then
+        COMPREPLY=($(compgen -W "${client_commands}" -- "${cur}"))
+    elif [[ ${COMP_WORDS[1]} == "server" ]]; then
+        COMPREPLY=($(compgen -W "${server_commands}" -- "${cur}"))
     fi
 }
 

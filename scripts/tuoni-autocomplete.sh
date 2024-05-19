@@ -2,7 +2,7 @@
 
 # Define the function for autocompletion
 _tuoni_commands() {
-    local commands="start stop restart logs clean-configuration update"
+    local commands="start stop restart logs clean-configuration update update-silent"
 
     if [ -n "$BASH_VERSION" ]; then
         # Bash: Use COMPREPLY for completion replies

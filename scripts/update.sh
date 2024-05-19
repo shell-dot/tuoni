@@ -5,16 +5,18 @@ set -e
 ENV_PATH="$PROJECT_ROOT/config/tuoni.env"
 CONFIG_PATH="$PROJECT_ROOT/config/tuoni.yml"
 
-### ask for confirmation
-read -r -p "Are you sure you want to update? [y/N] " response
-case "$response" in
-    [yY][eE][sS]|[yY])
-        ;;
-    *)
-        echo "INFO | Aborting"
-        exit 1
-        ;;
-esac
+if [[ "$1" != "silent" ]]; then
+    ### ask for confirmation
+    read -r -p "Are you sure you want to update? [y/N] " response
+    case "$response" in
+        [yY][eE][sS]|[yY])
+            ;;
+        *)
+            echo "INFO | Aborting"
+            exit 1
+            ;;
+    esac
+fi
 
 echo "INFO | Running update script"
 

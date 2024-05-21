@@ -28,8 +28,6 @@ if ! command_exists "yq"; then
         ${SUDO_COMMAND} chmod +x /usr/local/bin/yq
         echo "INFO | yq has been installed to /usr/local/bin/yq"
     fi
-else
-    echo "yq is already installed."
 fi
 
 # Install other missing packages

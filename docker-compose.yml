@@ -48,6 +48,7 @@ services:
     ports:
       - "${TUONI_CLIENT_PORT}:${TUONI_CLIENT_PORT}"
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx:/etc/nginx/conf.d:ro
+      - ./nginx/502_504.html:/var/www/errors/502_504.html:ro
       - ./ssl/client/client.crt:/etc/nginx/certs/tuoni.crt:ro
       - ./ssl/client/client-private.pem:/etc/nginx/certs/tuoni.key:ro

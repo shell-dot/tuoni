@@ -40,3 +40,6 @@ logging:
       max-file-size: 10MB
       max-history: 30
       total-size-cap: 1GB
+
+client:
+  port: 12702

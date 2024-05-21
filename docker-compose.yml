@@ -46,7 +46,7 @@ services:
     hostname: tuoni-client-nginx
     image: nginx:latest
     ports:
-      - "12702:443"
+      - "${TUONI_CLIENT_PORT}:${TUONI_CLIENT_PORT}"
     volumes:
       - ./nginx:/etc/nginx/conf.d
       - ./ssl/client/client.crt:/etc/nginx/certs/tuoni.crt:ro

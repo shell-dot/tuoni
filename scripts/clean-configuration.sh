@@ -10,6 +10,7 @@ options[3]="payload-templates"
 options[4]="ssl/server"
 options[5]="ssl/client"
 options[6]="plugins"
+options[7]="nginx"
 
 #Clear screen for menu
 clear
@@ -68,6 +69,7 @@ if [[ ${choices[3]} ]]; then rm -rf $PROJECT_ROOT/payload-templates/* || true; f
 if [[ ${choices[4]} ]]; then rm -rf $PROJECT_ROOT/ssl/server/* || true; fi
 if [[ ${choices[5]} ]]; then rm -rf $PROJECT_ROOT/ssl/client/* || true; fi
 if [[ ${choices[6]} ]]; then rm -rf $PROJECT_ROOT/plugins/* || true; fi
+if [[ ${choices[7]} ]]; then rm -rf $PROJECT_ROOT/nginx/tuoni.conf || true; fi
 
 echo "INFO | Configuration cleaned"
 

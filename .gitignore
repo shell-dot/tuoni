@@ -12,3 +12,4 @@
 /logs/
 /payload-templates/
 /plugins/
+/nginx/tuoni.conf

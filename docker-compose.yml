@@ -22,7 +22,7 @@ services:
     image: ghcr.io/shell-dot/tuoni/server:${VERSION}
     volumes:
       - ./data/:/app/data/
-      - ./logs/:/app/logs/
+      - ./logs/server/:/app/logs/
       - ./payload-templates/:/app/custom-payload-templates/:ro
       - ./config/tuoni.yml:/app/tuoni-production.yml:ro
       - ./ssl/server/server-selfsigned.keystore:/app/ssl/selfsigned.keystore:ro

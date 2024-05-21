@@ -29,12 +29,19 @@ if [ $(yq e '. | has("client")' $TUONI_CONFIG_FILE_PATH) == false ]; then
   yq e '.client = load("'$TUONI_CONFIG_EXAMPLE_FILE_PATH'").client' $TUONI_CONFIG_FILE_PATH --inplace
 fi
 
-for dir in data logs payload-templates plugins; do
+for dir in data logs/server logs/client logs/nginx payload-templates plugins; do
     if [ ! -d "$PROJECT_ROOT/$dir" ]; then
         echo "INFO | $dir directory not found, creating ..."
         mkdir "$PROJECT_ROOT/$dir"
     fi
 done
+
+### Check if we have server log in the old location, move it if so, pre 0.3.2 
+if [ -f "$PROJECT_ROOT/logs/tuoni-server.log" ]; then
+  echo "INFO | logs/tuoni-server.log found, moving to logs/server folder ..."
+  ${SUDO_COMMAND} mv $PROJECT_ROOT/logs/tuoni-server.log $PROJECT_ROOT/logs/server/tuoni-server.log
+fi
+
 
 if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
     echo "INFO | ssl/server/server-selfsigned.keystore file not found, creating ..."

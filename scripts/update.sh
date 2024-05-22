@@ -34,4 +34,7 @@ ${SUDO_COMMAND} docker pull ghcr.io/shell-dot/tuoni/server:${LATEST_VERSION}
 echo "================================================================"
 echo "INFO | Update script finished - make sure to restart the service"
 
+. $PROJECT_ROOT/scripts/check-packages.sh
+. $PROJECT_ROOT/scripts/check-docker.sh
 . $PROJECT_ROOT/scripts/check-configuration.sh
+. $PROJECT_ROOT/scripts/check-autocomplete.sh

@@ -24,7 +24,17 @@ if ! command_exists "yq"; then
     else
         # If yq is not available in the repository, download it manually
         echo "INFO | yq not available in apt repository, downloading from GitHub..."
-        ${SUDO_COMMAND} wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_arm64 -O /usr/local/bin/yq
+
+        ARCH=$(uname -m)
+        if [ "$ARCH" = "x86_64" ]; then
+            sudo wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 -O /usr/local/bin/yq
+        elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+            sudo wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_arm64 -O /usr/local/bin/yq
+        else
+            echo "Unsupported architecture: $ARCH"
+            exit 1;
+        fi
+
         ${SUDO_COMMAND} chmod +x /usr/local/bin/yq
         echo "INFO | yq has been installed to /usr/local/bin/yq"
     fi

@@ -23,10 +23,13 @@ if [ ! -f "$PROJECT_ROOT/config/tuoni.yml" ]; then
 fi
 
 # Check if 'client' attribute exists, pre 0.3.2
-if [ $(yq e '. | has("client")' $TUONI_CONFIG_FILE_PATH) == false ]; then
-  echo "INFO | 'client' attribute is missing from config, adding it..."
-  # Extract the 'client' node from the example file and write to production config
-  yq e '.client = load("'$TUONI_CONFIG_EXAMPLE_FILE_PATH'").client' $TUONI_CONFIG_FILE_PATH --inplace
+if [[ ! $(yq '.client.port' $TUONI_CONFIG_FILE_PATH) =~ ^[0-9]+$ ]]; then
+  echo "INFO | 'client' attribute is missing or invalid in config, adding it..."
+
+echo "
+client:
+  port: 12702
+" >> $TUONI_CONFIG_FILE_PATH
 fi
 
 for dir in data logs/server logs/client logs/nginx payload-templates plugins; do
@@ -83,7 +86,7 @@ if [ ! -f "$PROJECT_ROOT/nginx/tuoni.conf" ]; then
 fi
 
 ### make sure nginx has correct listen port from tuoni config file
-TUONI_CLIENT_PORT=$(yq e '.client.port' $TUONI_CONFIG_FILE_PATH)
+TUONI_CLIENT_PORT=$(yq '.client.port' $TUONI_CONFIG_FILE_PATH)
 sed -i "s/\(listen \)[0-9]\+\(.*\)/\1$TUONI_CLIENT_PORT\2/" $PROJECT_ROOT/nginx/tuoni.conf
 
 ${SUDO_COMMAND} chown $USER:$USER -R "${PROJECT_ROOT}/ssl"

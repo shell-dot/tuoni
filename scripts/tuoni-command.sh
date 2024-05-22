@@ -6,7 +6,7 @@
 
 TUONI_CONFIG_FILE_PATH="$PROJECT_ROOT/config/tuoni.yml"
 
-export TUONI_CLIENT_PORT=$(yq e '.client.port' $TUONI_CONFIG_FILE_PATH)
+export TUONI_CLIENT_PORT=$(yq '.client.port' $TUONI_CONFIG_FILE_PATH)
 
 TUONI_DOCKER_COMPOSE_COMMAND="docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml"
 

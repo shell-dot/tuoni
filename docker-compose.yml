@@ -38,6 +38,15 @@ services:
     hostname: tuoni-client
     image: ghcr.io/shell-dot/tuoni/client:${VERSION}
     user: 1000:100
+    environment:
+    - TUONI_CLIENT_PORT
+    - NUXT_LOGGER_ENABLED=${TUONI_CLIENT_LOGGER_ENABLED}
+    - NUXT_LOGGER_CONSOLE=${TUONI_CLIENT_LOGGER_CONSOLE}
+    - NUXT_LOGGER_LEVEL=${TUONI_CLIENT_LOGGER_LEVEL}
+    - NUXT_LOGGER_HEADERS=${TUONI_CLIENT_LOGGER_HEADERS}
+    - NUXT_LOGGER_SH=${TUONI_CLIENT_LOGGER_SH}
+    volumes:
+    - ./logs/client/:/srv/logs/client/:rw
 
   tuoni-client-nginx:
     <<: *defaults
@@ -52,3 +61,5 @@ services:
       - ./nginx/502_504.html:/var/www/errors/502_504.html:ro
       - ./ssl/client/client.crt:/etc/nginx/certs/tuoni.crt:ro
       - ./ssl/client/client-private.pem:/etc/nginx/certs/tuoni.key:ro
+      ### uncomment to direct logs to file
+      ### - ./logs/nginx/:/var/log/nginx/:rw

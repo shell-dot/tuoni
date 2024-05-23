@@ -43,3 +43,10 @@ logging:
 
 client:
   port: 12702
+  logger: 
+    to_file: false
+    to_console: false
+    level: info
+    sh: false
+    headers: 
+      - user-agent

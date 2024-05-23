@@ -29,6 +29,13 @@ if [[ ! $(yq '.client.port' $TUONI_CONFIG_FILE_PATH) =~ ^[0-9]+$ ]]; then
 echo "
 client:
   port: 12702
+  logger: 
+    to_file: false
+    to_console: false
+    level: info
+    sh: false
+    headers: 
+      - user-agent
 " >> $TUONI_CONFIG_FILE_PATH
 fi
 

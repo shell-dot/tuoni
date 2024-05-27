@@ -13,3 +13,5 @@
 /payload-templates/
 /plugins/
 /nginx/tuoni.conf
+/scripts/tools/*
+!/scripts/tools/.gitkeep

@@ -2,6 +2,10 @@
 
 set -e
 
+if [[ "$SILENT" == "1" ]]; then
+  echo "INFO | Silent mode enabled, no confirmation prompts ..."
+fi
+
 SUDO_COMMAND=
 if command -v "sudo" &>/dev/null; then
   SUDO_COMMAND="sudo -E"

@@ -48,16 +48,22 @@ if [ "$docker_installed" -eq 0 ]; then
   echo "INFO | Docker is not installed, proceeding with installation ..."
 # If versions do not meet the requirement, ask if the user wants to continue
 else
+  echo -e "\n\n\n\n\n"
   echo "WARNING | Docker or Docker Compose do not meet the required version."
   echo "INFO | Docker version: $installed_docker_version, required version: 25.0.0"
   echo "INFO | Docker Compose version: $installed_compose_version, required version: 2.0.0"
   echo "INFO | Before installing new packages, the setup will first remove any existing Docker-related packages if found:"
   echo "       docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc"
-  read -p "Do you want to proceed with the installation? (y/N): " -n 1 -r
-  echo    # (optional) move to a new line
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "INFO | Installation aborted by the user."
-    exit 1
+
+  # Skip prompt if SILENT is set to 1  
+  if [[ "$SILENT" != "1" ]]; then
+    read -r -p "Do you want to proceed with the installation? (y/N): " -n 1 -r
+    echo    # (optional) move to a new line
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      echo -e "\n\n\n\n\n"
+      echo "INFO | Docker installation aborted by the user, setup is not complete ..."
+      exit 1
+    fi
   fi
 
   ${SUDO_COMMAND} systemctl stop docker --quiet

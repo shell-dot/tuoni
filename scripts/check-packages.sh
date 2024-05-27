@@ -15,29 +15,21 @@ if ! command_exists "curl"; then REQUIRED_PACKAGES+=('curl'); fi
 if ! command_exists "jq"; then REQUIRED_PACKAGES+=('jq'); fi
 if ! command_exists "git"; then REQUIRED_PACKAGES+=('git'); fi
 
-# Special check for yq due to potential repository issues
-if ! command_exists "yq"; then
-    # Try to install yq from the repository first
-    echo "INFO | Following packages are not found, installing: yq"
-    if ${SUDO_COMMAND} apt-get install -y yq &>/dev/null; then
-        echo "INFO | yq installed successfully from apt repository"
+if [ ! -f "$PROJECT_ROOT/scripts/tools/yq" ]; then
+    echo "INFO | yq missing from $PROJECT_ROOT/scripts/tools, going to download ..."
+    ARCH=$(uname -m)
+    if [ "$ARCH" = "x86_64" ]; then
+        wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 -O $PROJECT_ROOT/scripts/tools/yq
+    elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+        wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_arm64 -O $PROJECT_ROOT/scripts/tools/yq
     else
-        # If yq is not available in the repository, download it manually
-        echo "INFO | yq not available in apt repository, downloading from GitHub..."
-
-        ARCH=$(uname -m)
-        if [ "$ARCH" = "x86_64" ]; then
-            sudo wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 -O /usr/local/bin/yq
-        elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-            sudo wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_arm64 -O /usr/local/bin/yq
-        else
-            echo "Unsupported architecture: $ARCH"
-            exit 1;
-        fi
-
-        ${SUDO_COMMAND} chmod +x /usr/local/bin/yq
-        echo "INFO | yq has been installed to /usr/local/bin/yq"
+        echo -e "\n\n\n\n\n"
+        echo "ERROR | Unsupported architecture: $ARCH"
+        exit 1;
     fi
+
+    chmod +x $PROJECT_ROOT/scripts/tools/yq
+    echo "INFO | yq has been downloaded to $PROJECT_ROOT/scripts/tools/yq"
 fi
 
 # Install other missing packages

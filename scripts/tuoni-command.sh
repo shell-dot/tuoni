@@ -75,7 +75,7 @@ handle_server_command() {
     esac
 }
 
-if ! [[ "$TUONI_COMMAND" =~ ^(version|start|stop|restart|logs|clean-configuration|update|update-silent|client|server)$ ]]; then
+if ! [[ "$TUONI_COMMAND" =~ ^(version|print-config-file|start|stop|restart|logs|clean-configuration|update|update-silent|client|server)$ ]]; then
   cat << EOF
 $(tput bold)TUONI Command Line Interface (CLI) - Version $VERSION$(tput sgr0)
 
@@ -86,7 +86,8 @@ $(tput smul)USAGE:$(tput rmul)
 
 $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     $(tput setaf 3)help$(tput sgr0)                 Display help.
-    $(tput setaf 3)version$(tput sgr0)                 Display version.
+    $(tput setaf 3)version$(tput sgr0)              Display version.
+    $(tput setaf 3)print-config-file$(tput sgr0)    Display config file.
     $(tput setaf 3)start$(tput sgr0)                Starts the Tuoni dockers.
     $(tput setaf 3)stop$(tput sgr0)                 Stops the Tuoni dockers.
     $(tput setaf 3)restart$(tput sgr0)              Restarts the Tuoni dockers.
@@ -98,7 +99,7 @@ $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
 $(tput smul)ADDITIONAL INFORMATION:$(tput rmul)
     Tuoni URL:           $(tput setaf 4)https://localhost:12702/$(tput sgr0)
     Documentation:       $(tput setaf 4)https://docs.shelldot.com/$(tput sgr0)
-    Configuration Path:  $(tput setaf 6)config/tuoni.yml$(tput sgr0)
+    Configuration Path:  $(tput setaf 6)${PROJECT_ROOT}/config/tuoni.yml$(tput sgr0)
 
 For further assistance or to report issues, please visit our documentation or contact support through our website.
 
@@ -111,6 +112,11 @@ echo "TUONI ${TUONI_COMPONENT^^} running command: $TUONI_COMMAND $TUONI_SUBCOMMA
 
 if [ "$TUONI_COMMAND" == "version" ]; then
   cat ${PROJECT_ROOT}/config/tuoni.env | grep VERSION
+fi
+
+if [ "$TUONI_COMMAND" == "print-config-file" ]; then
+  echo "INFO | Printing configuration file from ${PROJECT_ROOT}/config/tuoni.yml ..."
+  ${PROJECT_ROOT}/scripts/tools/yq ${PROJECT_ROOT}/config/tuoni.yml
 fi
 
 if [ "$TUONI_COMMAND" == "clean-configuration" ]; then

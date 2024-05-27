@@ -3,7 +3,7 @@
 # Define the function for autocompletion
 _tuoni_commands() {
     local cur prev commands client_commands server_commands
-    commands="help version start stop restart logs clean-configuration update update-silent"
+    commands="help version print-config-file start stop restart logs clean-configuration update update-silent"
     client_commands="start stop restart logs"
     server_commands="start stop restart logs"
 
@@ -22,7 +22,7 @@ _tuoni_commands() {
 # Zsh-specific autocompletion function
 _tuoni_commands_zsh() {
     local -a commands client_commands server_commands
-    commands=("help" "version" "start" "stop" "restart" "logs" "clean-configuration" "update" "update-silent" "client" "server")
+    commands=("help" "version" "print-config-file" "start" "stop" "restart" "logs" "clean-configuration" "update" "update-silent" "client" "server")
     client_commands=("start" "stop" "restart" "logs")
     server_commands=("start" "stop" "restart" "logs")
 

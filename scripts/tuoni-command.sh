@@ -117,7 +117,7 @@ if [ "$TUONI_COMMAND" == "update" ]; then
 fi
 
 if [ "$TUONI_COMMAND" == "update-silent" ]; then
-  . "$PROJECT_ROOT/scripts/update.sh" silent
+  SILENT=1 . "$PROJECT_ROOT/scripts/update.sh"
 fi
 
 if [ "$TUONI_COMMAND" == "logs" ]; then

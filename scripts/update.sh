@@ -5,14 +5,17 @@ set -e
 ENV_PATH="$PROJECT_ROOT/config/tuoni.env"
 CONFIG_PATH="$PROJECT_ROOT/config/tuoni.yml"
 
-if [[ "$1" != "silent" ]]; then
+# Skip prompt if SILENT is set to 1
+if [[ "$SILENT" != "1" ]]; then
     ### ask for confirmation
-    read -r -p "Are you sure you want to update? [y/N] " response
+    echo -e "\n\n\n\n\n"
+    read -r -p "Are you sure you want to update? [y/N]" response
     case "$response" in
         [yY][eE][sS]|[yY])
             ;;
         *)
-            echo "INFO | Aborting"
+            echo -e "\n\n\n\n\n"
+            echo "INFO | User aborted update process ..."
             exit 1
             ;;
     esac
@@ -27,7 +30,7 @@ cd $PROJECT_ROOT && git pull
 LATEST_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)
 sed -i "s/VERSION=.*/VERSION=${LATEST_VERSION}/g" "${ENV_PATH}"
 
-echo "INFO | Pull docker images"
+echo "INFO | Pulling docker images..."
 ${SUDO_COMMAND} docker pull ghcr.io/shell-dot/tuoni/client:${LATEST_VERSION}
 ${SUDO_COMMAND} docker pull ghcr.io/shell-dot/tuoni/server:${LATEST_VERSION}
 

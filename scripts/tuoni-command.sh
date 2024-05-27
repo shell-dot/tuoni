@@ -75,7 +75,7 @@ handle_server_command() {
     esac
 }
 
-if ! [[ "$TUONI_COMMAND" =~ ^(version|print-config-file|start|stop|restart|logs|clean-configuration|update|update-silent|client|server)$ ]]; then
+if ! [[ "$TUONI_COMMAND" =~ ^(version|print-config-file|print-credentials|start|stop|restart|logs|clean-configuration|update|update-silent|client|server)$ ]]; then
   cat << EOF
 $(tput bold)TUONI Command Line Interface (CLI) - Version $VERSION$(tput sgr0)
 
@@ -88,6 +88,7 @@ $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     $(tput setaf 3)help$(tput sgr0)                 Display help.
     $(tput setaf 3)version$(tput sgr0)              Display version.
     $(tput setaf 3)print-config-file$(tput sgr0)    Display config file.
+    $(tput setaf 3)print-credentials$(tput sgr0)    Display tuoni credentials.
     $(tput setaf 3)start$(tput sgr0)                Starts the Tuoni dockers.
     $(tput setaf 3)stop$(tput sgr0)                 Stops the Tuoni dockers.
     $(tput setaf 3)restart$(tput sgr0)              Restarts the Tuoni dockers.
@@ -117,6 +118,11 @@ fi
 if [ "$TUONI_COMMAND" == "print-config-file" ]; then
   echo "INFO | Printing configuration file from ${PROJECT_ROOT}/config/tuoni.yml ..."
   ${PROJECT_ROOT}/scripts/tools/yq ${PROJECT_ROOT}/config/tuoni.yml
+fi
+
+if [ "$TUONI_COMMAND" == "print-credentials" ]; then
+  echo "INFO | Printing credentials from ${PROJECT_ROOT}/config/tuoni.yml ..."
+  ${PROJECT_ROOT}/scripts/tools/yq '.tuoni.auth.credentials' ${PROJECT_ROOT}/config/tuoni.yml
 fi
 
 if [ "$TUONI_COMMAND" == "clean-configuration" ]; then

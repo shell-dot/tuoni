@@ -36,12 +36,21 @@ or if you prefer curl
 curl https://tuoni.sh | bash
 cd tuoni
 ```
+
 ---
+
+if you prefer to install without any user input, add SILENT=1 to the command line
+```
+SILENT=1 curl https://tuoni.sh | bash
+```
+you can also define TUONI_USERNAME and TUONI_PASSWORD to prefill these
+
+---
+
 in the unlikely event of nothing happening, try installing wget or curl first...
 ```bash
 sudo apt-get install -y wget curl
 ```
-
 
 ## Documentation
 https://docs.shelldot.com/

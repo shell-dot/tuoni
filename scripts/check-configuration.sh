@@ -23,8 +23,8 @@ if [ ! -f "$PROJECT_ROOT/config/tuoni.yml" ]; then
     if [[ "$SILENT" != "1" ]]; then
         echo -e "\n\n\n\n\n"
         echo "INFO | Tuoni username and password not found in config, select your own or use the pregenerated options by hitting enter ..."
-        read -r -p "INPUT | Enter Tuoni username [$TUONI_USERNAME_TO_CONFIG]: " input_username
-        read -r -p "INPUT | Enter Tuoni password [$TUONI_PASSWORD_TO_CONFIG]: " input_password
+        read -r -p "INPUT | Enter Tuoni username [$TUONI_USERNAME_TO_CONFIG]: " input_username </dev/tty
+        read -r -p "INPUT | Enter Tuoni password [$TUONI_PASSWORD_TO_CONFIG]: " input_password </dev/tty
 
         # Assign only if user has provided an input
         if [[ -n "$input_username" ]]; then

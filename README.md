@@ -27,6 +27,9 @@ Tuoni is a sophisticated, cross-platform red teaming framework designed to enhan
 ![Screenshot of agent terminal](assets/Screenshot3.png)
 
 ## Installation
+
+Installer will try to install docker version 25.0.0 or greater
+
 ```bash
 wget  -O - https://tuoni.sh | bash
 cd tuoni
@@ -51,6 +54,8 @@ in the unlikely event of nothing happening, try installing wget or curl first...
 ```bash
 sudo apt-get install -y wget curl
 ```
+
+it is safe to run the setup multiple time
 
 ## Documentation
 https://docs.shelldot.com/

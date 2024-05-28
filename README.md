@@ -44,7 +44,7 @@ cd tuoni
 
 if you prefer to install without any user input, add SILENT=1 to the command line
 ```
-SILENT=1 curl https://tuoni.sh | bash
+export SILENT=1; curl https://tuoni.sh | bash
 ```
 you can also define TUONI_USERNAME and TUONI_PASSWORD to prefill these
 

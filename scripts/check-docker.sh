@@ -107,7 +107,33 @@ ${SUDO_COMMAND} systemctl enable docker
 # Clear the restart counter for the Docker service
 ${SUDO_COMMAND} systemctl reset-failed docker.service
 
+set +e
+
 # Check if Docker is running, and start it if not
 if ! ${SUDO_COMMAND} systemctl is-active --quiet docker; then
     ${SUDO_COMMAND} systemctl start docker
+fi
+
+# Initial sleep duration
+sleep_duration=2
+
+# Try to start Docker service up to 10 times
+for i in {1..10}; do
+    if ${SUDO_COMMAND} systemctl is-active --quiet docker; then
+        echo "INFO | Docker is running ..."
+        break
+    else
+        echo "INFO | Attempt $i to start Docker ..."
+        echo "INFO | Sleeping for $sleep_duration seconds..."
+        sleep $sleep_duration  # Add a brief delay between attempts
+        sleep_duration=$((sleep_duration + 2))  # Increase sleep duration by 2 seconds each time
+        ${SUDO_COMMAND} systemctl reset-failed docker.service
+        ${SUDO_COMMAND} systemctl start docker
+    fi
+done
+
+# Final check if Docker failed to start
+if ! ${SUDO_COMMAND} systemctl is-active --quiet docker; then
+    echo "ERROR | Failed to start Docker after 10 attempts ..."
+    exit 1;
 fi

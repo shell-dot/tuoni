@@ -57,7 +57,7 @@ else
 
   # Skip prompt if SILENT is set to 1  
   if [[ "$SILENT" != "1" ]]; then
-    read -r -p "Do you want to proceed with the installation? (y/N): " -n 1 -r
+    read -r -p "Do you want to proceed with the installation? (y/N): " -n 1 -r </dev/tty
     echo    # (optional) move to a new line
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
       echo -e "\n\n\n\n\n"

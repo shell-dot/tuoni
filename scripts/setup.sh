@@ -4,7 +4,7 @@ set -e
 
 SUDO_COMMAND=
 if command -v "sudo" &>/dev/null; then
-  SUDO_COMMAND="sudo "
+  SUDO_COMMAND="sudo -E"
 fi
 
 if ! command -v "git" &>/dev/null; then

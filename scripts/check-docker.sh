@@ -70,6 +70,7 @@ else
   ${SUDO_COMMAND} systemctl disable docker --quiet
   # Remove all docker related packages, list taken from docker docs
   for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do ${SUDO_COMMAND} apt-get remove -y $pkg || true; done
+  ${SUDO_COMMAND} systemctl daemon-reload
 fi
 
 echo "INFO | Docker installation ..."
@@ -100,5 +101,13 @@ fi
 
 ${SUDO_COMMAND} apt-get update
 ${SUDO_COMMAND} apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-buildx-plugin
+${SUDO_COMMAND} systemctl daemon-reload
 ${SUDO_COMMAND} systemctl enable docker
-${SUDO_COMMAND} systemctl restart docker
+
+# Clear the restart counter for the Docker service
+${SUDO_COMMAND} systemctl reset-failed docker.service
+
+# Check if Docker is running, and start it if not
+if ! ${SUDO_COMMAND} systemctl is-active --quiet docker; then
+    ${SUDO_COMMAND} systemctl start docker
+fi

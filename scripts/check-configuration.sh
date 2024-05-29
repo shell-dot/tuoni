@@ -60,9 +60,9 @@ fi
 
 ### check if logs/client folder has 1000:1000, and apply if needed
 if [ "$(stat -c "%u:%g" "$PROJECT_ROOT/logs/client")" != "1000:1000" ]; then
+  echo "INFO | ownership of $PROJECT_ROOT/logs/client will be changed to 1000:1000 ..."
   # Change the ownership to 1000:1000
   chown -R 1000:1000 "$$PROJECT_ROOT/logs/client"
-  echo "INFO | Ownership of $PROJECT_ROOT/logs/client changed to 1000:1000."
 fi
 
 if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then

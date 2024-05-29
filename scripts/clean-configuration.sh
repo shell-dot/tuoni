@@ -17,7 +17,7 @@ clear
 
 #Menu function
 function CLEAN_MENU {
-    echo "CLEAN Options"
+    echo "TUONI Configuration cleaner options:"
     for NUM in ${!options[@]}; do
         echo "[""${choices[NUM]:- }""]" $(( NUM+1 ))") ${options[NUM]}"
     done
@@ -40,14 +40,15 @@ while CLEAN_MENU && read -e -p "Select the which configuration folders to purge 
     fi
 done
 
+echo -e "\n\n\n\n\n"
 
 ### ask for confirmation
-read -r -p "Are you sure you want to stop the service and clean the configuration? [y/N] " response
+read -r -p "WARNING | Are you sure you want to stop the service and clean the configuration? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
         ;;
     *)
-        echo "INFO | Aborting"
+        echo "INFO | Aborting configuration cleaner ..."
         exit 1
         ;;
 esac
@@ -56,7 +57,7 @@ ENV_PATH="$PROJECT_ROOT/config/tuoni.env"
 CONFIG_PATH="$PROJECT_ROOT/config/tuoni.yml"
 
 ${SUDO_COMMAND} docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml down -v --rmi all --remove-orphans
-echo "INFO | Docker containers stopped and removed"
+echo "INFO |Tuoni docker containers stopped and removed."
 
 if [[ ${choices[0]} ]]; then
   rm ${ENV_PATH} || true
@@ -71,6 +72,6 @@ if [[ ${choices[5]} ]]; then rm -rf $PROJECT_ROOT/ssl/client/* || true; fi
 if [[ ${choices[6]} ]]; then rm -rf $PROJECT_ROOT/plugins/* || true; fi
 if [[ ${choices[7]} ]]; then rm -rf $PROJECT_ROOT/nginx/tuoni.conf || true; fi
 
-echo "INFO | Configuration cleaned"
+echo "INFO | Tuoni configuration cleaned."
 
 . $PROJECT_ROOT/scripts/check-configuration.sh

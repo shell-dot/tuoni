@@ -41,7 +41,7 @@ fi
 
 # Check if 'client' attribute exists, pre 0.3.2
 if [[ ! $($PROJECT_ROOT/scripts/tools/yq '.client.port' $TUONI_CONFIG_FILE_PATH) =~ ^[0-9]+$ ]]; then
-  echo "INFO | 'client' attribute is missing or invalid in config, adding it..."
+  echo "INFO | 'client' attribute is missing or invalid in config, adding ..."
   $PROJECT_ROOT/scripts/tools/yq '.client = load("'$TUONI_CONFIG_EXAMPLE_FILE_PATH'").client' --inplace $TUONI_CONFIG_FILE_PATH 
 fi
 
@@ -52,18 +52,20 @@ for dir in data logs/server logs/client logs/nginx payload-templates plugins; do
     fi
 done
 
+### check if logs/client folder has 1000:1000, and apply if needed
+if [ "$(stat -c "%u:%g" "$PROJECT_ROOT/logs/client")" != "1000:1000" ]; then
+  echo "INFO | ownership of $PROJECT_ROOT/logs/client will be changed to 1000:1000 ..."
+  # Change the ownership to 1000:1000
+  ${SUDO_COMMAND} chown -R 1000:1000 "$PROJECT_ROOT/logs/client"
+fi
+
 ### Check if we have server log in the old location, move it if so, pre 0.3.2 
 if [ -f "$PROJECT_ROOT/logs/tuoni-server.log" ]; then
   echo "INFO | logs/tuoni-server.log found, moving to logs/server folder ..."
   ${SUDO_COMMAND} mv $PROJECT_ROOT/logs/tuoni-server.lo* $PROJECT_ROOT/logs/server/
 fi
 
-### check if logs/client folder has 1000:1000, and apply if needed
-if [ "$(stat -c "%u:%g" "$PROJECT_ROOT/logs/client")" != "1000:1000" ]; then
-  echo "INFO | ownership of $PROJECT_ROOT/logs/client will be changed to 1000:1000 ..."
-  # Change the ownership to 1000:1000
-  chown -R 1000:1000 "$PROJECT_ROOT/logs/client"
-fi
+
 
 if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
     echo "INFO | ssl/server/server-selfsigned.keystore file not found, creating ..."

@@ -29,11 +29,11 @@ if [ ! -f "$PROJECT_ROOT/scripts/tools/yq" ]; then
     fi
 
     chmod +x $PROJECT_ROOT/scripts/tools/yq
-    echo "INFO | yq has been downloaded to $PROJECT_ROOT/scripts/tools/yq"
+    echo "INFO | yq has been downloaded to $PROJECT_ROOT/scripts/tools/yq."
 fi
 
 # Install other missing packages
 if [ "${#REQUIRED_PACKAGES[@]}" -ne 0 ]; then
-    echo "INFO | Following packages are not found, installing: ${REQUIRED_PACKAGES[*]}"
+    echo "INFO | Following packages are not found, installing: ${REQUIRED_PACKAGES[*]} ..."
      ${SUDO_COMMAND} apt-get update && ${SUDO_COMMAND} apt-get install -y ${REQUIRED_PACKAGES[*]}
 fi

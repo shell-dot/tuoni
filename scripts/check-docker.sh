@@ -120,7 +120,7 @@ sleep_duration=2
 # Try to start Docker service up to 10 times
 for i in {1..10}; do
     if ${SUDO_COMMAND} systemctl is-active --quiet docker; then
-        echo "INFO | Docker is running ..."
+        echo "INFO | Docker is running."
         break
     else
         echo "INFO | Attempt $i to start Docker ..."

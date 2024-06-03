@@ -9,8 +9,9 @@ options[2]="logs"
 options[3]="payload-templates"
 options[4]="ssl/server"
 options[5]="ssl/client"
-options[6]="plugins"
-options[7]="nginx"
+options[6]="plugins/server"
+options[7]="plugins/client"
+options[8]="nginx"
 
 #Clear screen for menu
 clear
@@ -64,13 +65,26 @@ if [[ ${choices[0]} ]]; then
   rm ${CONFIG_PATH} || true
 fi
 
+### data
 if [[ ${choices[1]} ]]; then rm -rf $PROJECT_ROOT/data/* || true; fi
+### logs
 if [[ ${choices[2]} ]]; then rm -rf $PROJECT_ROOT/logs/* || true; fi
+### payload-templates
 if [[ ${choices[3]} ]]; then rm -rf $PROJECT_ROOT/payload-templates/* || true; fi
+### ssl
 if [[ ${choices[4]} ]]; then rm -rf $PROJECT_ROOT/ssl/server/* || true; fi
 if [[ ${choices[5]} ]]; then rm -rf $PROJECT_ROOT/ssl/client/* || true; fi
-if [[ ${choices[6]} ]]; then rm -rf $PROJECT_ROOT/plugins/* || true; fi
-if [[ ${choices[7]} ]]; then rm -rf $PROJECT_ROOT/nginx/tuoni.conf || true; fi
+### plugins
+if [[ ${choices[6]} ]]; then 
+    rm -rf $PROJECT_ROOT/plugins/server/* || true;
+    git checkout $PROJECT_ROOT/plugins/server/;
+fi
+if [[ ${choices[7]} ]]; then
+    rm -rf $PROJECT_ROOT/plugins/client/* || true;
+    git checkout $PROJECT_ROOT/plugins/client/;
+fi
+### nginx
+if [[ ${choices[8]} ]]; then rm -rf $PROJECT_ROOT/nginx/tuoni.conf || true; fi
 
 echo "INFO | Tuoni configuration cleaned."
 

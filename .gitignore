@@ -11,7 +11,12 @@
 /data/
 /logs/
 /payload-templates/
-/plugins/
+/plugins/server/*
+/plugins/client/*
 /nginx/tuoni.conf
 /scripts/tools/*
 !/scripts/tools/.gitkeep
+!.gitkeep
+
+# include default launchers
+!plugins/client/default

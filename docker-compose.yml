@@ -28,7 +28,7 @@ services:
       - ./ssl/server/server-selfsigned.keystore:/app/ssl/selfsigned.keystore:ro
       - ./ssl/server/server-private.pem:/app/prod-private.pem:ro
       - ./ssl/server/server-public.pem:/app/prod-public.pem:ro
-      - ./plugins/:/app/plugins/:ro
+      - ./plugins/server/:/app/plugins/:ro
     network_mode: host
 
   tuoni-client:
@@ -39,14 +39,15 @@ services:
     image: ghcr.io/shell-dot/tuoni/client:${VERSION}
     user: 1000:100
     environment:
-    - TUONI_CLIENT_PORT
-    - NUXT_LOGGER_ENABLED=${TUONI_CLIENT_LOGGER_ENABLED}
-    - NUXT_LOGGER_CONSOLE=${TUONI_CLIENT_LOGGER_CONSOLE}
-    - NUXT_LOGGER_LEVEL=${TUONI_CLIENT_LOGGER_LEVEL}
-    - NUXT_LOGGER_HEADERS=${TUONI_CLIENT_LOGGER_HEADERS}
-    - NUXT_LOGGER_SH=${TUONI_CLIENT_LOGGER_SH}
+      - TUONI_CLIENT_PORT
+      - NUXT_LOGGER_ENABLED=${TUONI_CLIENT_LOGGER_ENABLED}
+      - NUXT_LOGGER_CONSOLE=${TUONI_CLIENT_LOGGER_CONSOLE}
+      - NUXT_LOGGER_LEVEL=${TUONI_CLIENT_LOGGER_LEVEL}
+      - NUXT_LOGGER_HEADERS=${TUONI_CLIENT_LOGGER_HEADERS}
+      - NUXT_LOGGER_SH=${TUONI_CLIENT_LOGGER_SH}
     volumes:
-    - ./logs/client/:/srv/logs/client/:rw
+      - ./logs/client/:/srv/logs/client/:rw
+      - ./plugins/client:/srv/user-defined-plugins/:ro
 
   tuoni-client-nginx:
     <<: *defaults

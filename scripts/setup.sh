@@ -19,10 +19,10 @@ if [ ! -d "/srv/tuoni" ]; then
   ${SUDO_COMMAND} mkdir /srv/tuoni 
   ${SUDO_COMMAND} chown $USER:$USER /srv/tuoni
   git clone https://github.com/shell-dot/tuoni.git /srv/tuoni
+  cd /srv/tuoni
+  ./tuoni start
 else
   echo "INFO | tuoni directory already exists. Skipping git clone ..."
+  cd /srv/tuoni
+  ./tuoni update-silent
 fi
-
-cd /srv/tuoni
-
-./tuoni start

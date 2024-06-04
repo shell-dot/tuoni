@@ -9,7 +9,7 @@ CONFIG_PATH="$PROJECT_ROOT/config/tuoni.yml"
 if [[ "$SILENT" != "1" ]]; then
     ### ask for confirmation
     echo -e "\n\n\n\n\n"
-    read -r -p "WARNING | Are you sure you want to start Tuoni update? [y/N]" response
+    read -r -p "WARNING | Are you sure you want to start Tuoni update? Tuoni will be restarted. [y/N]" response
     case "$response" in
         [yY][eE][sS]|[yY])
             ;;
@@ -20,6 +20,10 @@ if [[ "$SILENT" != "1" ]]; then
             ;;
     esac
 fi
+
+echo "INFO | Tuoni is going to stopped ..."
+
+$PROJECT_ROOT/tuoni stop
 
 echo "INFO | Running Tuoni update script ..."
 
@@ -34,10 +38,15 @@ echo "INFO | Pulling Tuoni ${LATEST_VERSION} docker images..."
 ${SUDO_COMMAND} docker pull ghcr.io/shell-dot/tuoni/client:${LATEST_VERSION}
 ${SUDO_COMMAND} docker pull ghcr.io/shell-dot/tuoni/server:${LATEST_VERSION}
 
+echo -e "\n\n\n\n\n"
 echo "================================================================"
-echo "INFO | Update script finished - make sure to restart the service."
+echo "INFO | Update script finished - tuoni will be restarted."
+echo "================================================================"
+echo -e "\n\n\n\n\n"
 
 . $PROJECT_ROOT/scripts/check-packages.sh
 . $PROJECT_ROOT/scripts/check-docker.sh
 . $PROJECT_ROOT/scripts/check-configuration.sh
 . $PROJECT_ROOT/scripts/check-autocomplete.sh
+
+$PROJECT_ROOT/tuoni start

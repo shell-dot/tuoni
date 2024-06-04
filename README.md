@@ -55,7 +55,8 @@ in the unlikely event of nothing happening, try installing wget or curl first...
 sudo apt-get install -y wget curl
 ```
 
-it is safe to run the setup multiple time
+- it is safe to run the setup multiple time
+- if tuoni is already installed, the oneliner will run `tuoni update` command instead - the Tuoni C2 will be restarted
 
 ## Documentation
 https://docs.shelldot.com/

@@ -1,34 +1,27 @@
 # tuoni-autocomplete.sh
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Source the command definitions
+. $SCRIPT_DIR/tuoni-command-list.sh
 
 # Define the function for autocompletion
 _tuoni_commands() {
-    local cur prev commands client_commands server_commands
-    commands="help version print-config-file print-credentials start stop restart logs clean-configuration update update-silent update-docker-images"
-    client_commands="start stop restart logs"
-    server_commands="start stop restart logs"
+    local cur prev 
 
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     if [[ ${prev} == "tuoni" ]]; then
-        COMPREPLY=($(compgen -W "${commands} client server" -- "${cur}"))
+        COMPREPLY=($(compgen -W "${tuoni_commands} client server" -- "${cur}"))
     elif [[ ${COMP_WORDS[1]} == "client" ]]; then
-        COMPREPLY=($(compgen -W "${client_commands}" -- "${cur}"))
+        COMPREPLY=($(compgen -W "${tuoni_client_commands}" -- "${cur}"))
     elif [[ ${COMP_WORDS[1]} == "server" ]]; then
-        COMPREPLY=($(compgen -W "${server_commands}" -- "${cur}"))
+        COMPREPLY=($(compgen -W "${tuoni_server_commands}" -- "${cur}"))
     fi
 }
 
 # Zsh-specific autocompletion function
 _tuoni_commands_zsh() {
-    local -a commands client_commands server_commands
-    commands=(  "help" "version" "print-config-file" "print-credentials" \
-                "start" "stop" "restart" "logs" "clean-configuration" \
-                "update" "update-silent" "update-docker-images" \
-                "client" "server" )
-    client_commands=("start" "stop" "restart" "logs")
-    server_commands=("start" "stop" "restart" "logs")
-
     _arguments -C \
         '1: :->command' \
         '2: :->subcommand' \
@@ -36,13 +29,13 @@ _tuoni_commands_zsh() {
 
     case "$state" in
         command)
-            _describe -t commands 'tuoni commands' commands
+            _describe -t tuoni_commands_array 'tuoni commands' tuoni_commands_array
             ;;
         subcommand)
             if [[ ${words[2]} == "client" ]]; then
-                _describe -t client_commands 'tuoni client commands' client_commands
+                _describe -t tuoni_client_commands_array 'tuoni client commands' tuoni_client_commands_array
             elif [[ ${words[2]} == "server" ]]; then
-                _describe -t server_commands 'tuoni server commands' server_commands
+                _describe -t tuoni_server_commands_array 'tuoni server commands' tuoni_server_commands_array
             fi
             ;;
     esac

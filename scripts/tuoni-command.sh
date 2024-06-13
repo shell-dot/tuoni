@@ -3,6 +3,7 @@
 ### include env variables
 . "$PROJECT_ROOT/config/tuoni.env"
 . "$PROJECT_ROOT/scripts/_init.sh"
+. "$PROJECT_ROOT/scripts/tuoni-command-list.sh"
 
 TUONI_CONFIG_FILE_PATH="$PROJECT_ROOT/config/tuoni.yml"
 
@@ -75,7 +76,7 @@ handle_server_command() {
     esac
 }
 
-if ! [[ "$TUONI_COMMAND" =~ ^(version|print-config-file|print-credentials|start|stop|restart|logs|clean-configuration|update|update-silent|update-docker-images|client|server)$ ]]; then
+if ! [[ "$TUONI_COMMAND" =~ ^(${tuoni_commands_regex})$ ]]; then
   cat << EOF
 $(tput bold)TUONI Command Line Interface (CLI) - Version $VERSION$(tput sgr0)
 
@@ -85,19 +86,22 @@ $(tput smul)USAGE:$(tput rmul)
     $(tput setaf 2)tuoni server <command>$(tput sgr0)
 
 $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
-    $(tput setaf 3)help$(tput sgr0)                 Display help.
-    $(tput setaf 3)version$(tput sgr0)              Display version.
-    $(tput setaf 3)print-config-file$(tput sgr0)    Display config file.
-    $(tput setaf 3)print-credentials$(tput sgr0)    Display tuoni credentials.
-    $(tput setaf 3)start$(tput sgr0)                Starts the Tuoni dockers.
-    $(tput setaf 3)stop$(tput sgr0)                 Stops the Tuoni dockers.
-    $(tput setaf 3)restart$(tput sgr0)              Restarts the Tuoni dockers.
-    $(tput setaf 3)logs$(tput sgr0)                 Tails the logs for the Tuoni dockers.
-    $(tput setaf 3)clean-configuration$(tput sgr0)  Prompt which configuration files to remove and resets them to default.
-    $(tput setaf 3)update$(tput sgr0)               Perform git and docker pull.
-    $(tput setaf 3)update-silent$(tput sgr0)        Perform git and docker pull silently.
-    $(tput setaf 3)update-docker-images$(tput sgr0) Perform docker pull.
-
+    $(tput setaf 3)help$(tput sgr0)                   Display help.
+    $(tput setaf 3)version$(tput sgr0)                Display version.
+    $(tput setaf 3)print-config-file$(tput sgr0)      Display config file.
+    $(tput setaf 3)print-credentials$(tput sgr0)      Display tuoni credentials.
+    $(tput setaf 3)start$(tput sgr0)                  Starts the Tuoni dockers.
+    $(tput setaf 3)stop$(tput sgr0)                   Stops the Tuoni dockers.
+    $(tput setaf 3)restart$(tput sgr0)                Restarts the Tuoni dockers.
+    $(tput setaf 3)logs$(tput sgr0)                   Tails the logs for the Tuoni dockers.
+    $(tput setaf 3)clean-configuration$(tput sgr0)    Prompt which configuration files to remove and resets them to default.
+    $(tput setaf 3)update$(tput sgr0)                 Perform git and docker pull.
+    $(tput setaf 3)update-silent$(tput sgr0)          Perform git and docker pull silently.
+    $(tput setaf 3)update-docker-images$(tput sgr0)   Perform docker pull.
+    $(tput setaf 3)export-docker-images$(tput sgr0)   Export docker images to transfer folder.
+    $(tput setaf 3)import-docker-images$(tput sgr0)   Import docker images from transfer folder.
+    $(tput setaf 3)transfer-docker-images$(tput sgr0) Transfer docker images to remote defined in config/tuoni.yml.
+    
 $(tput smul)ADDITIONAL INFORMATION:$(tput rmul)
     Tuoni URL:           $(tput setaf 4)https://localhost:12702/$(tput sgr0)
     Documentation:       $(tput setaf 4)https://docs.shelldot.com/$(tput sgr0)
@@ -141,6 +145,26 @@ fi
 
 if [ "$TUONI_COMMAND" == "update-docker-images" ]; then
   ${SUDO_COMMAND} COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} pull
+  ${SUDO_COMMAND} docker pull openjdk:21-jdk-slim-bookworm
+fi
+
+if [ "$TUONI_COMMAND" == "export-docker-images" ]; then
+  echo "INFO | Exporting docker images to $PROJECT_ROOT/transfer/tuoni-docker-images.tar ..."
+  ${SUDO_COMMAND} rm -f $PROJECT_ROOT/transfer/tuoni-docker-images.tar
+  ${SUDO_COMMAND} docker save -o $PROJECT_ROOT/transfer/tuoni-docker-images.tar \
+    ghcr.io/shell-dot/tuoni/server:${VERSION} \
+    ghcr.io/shell-dot/tuoni/client:${VERSION} \
+    nginx:latest \
+    openjdk:21-jdk-slim-bookworm
+fi
+
+if [ "$TUONI_COMMAND" == "import-docker-images" ]; then
+  echo "INFO | Importing docker images from $PROJECT_ROOT/transfer/tuoni-docker-images.tar ..."
+  ${SUDO_COMMAND} docker load -i $PROJECT_ROOT/transfer/tuoni-docker-images.tar
+fi
+
+if [ "$TUONI_COMMAND" == "transfer-docker-images" ]; then
+  . "$PROJECT_ROOT/scripts/transfer.sh"
 fi
 
 if [ "$TUONI_COMMAND" == "logs" ]; then

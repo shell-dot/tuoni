@@ -1,5 +1,10 @@
 # tuoni-autocomplete.sh
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [ -n "$ZSH_VERSION" ]; then
+    SCRIPT_DIR=$(dirname "$0:A")
+elif [ -n "$BASH_VERSION" ]; then
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
 
 # Source the command definitions
 . $SCRIPT_DIR/tuoni-command-list.sh

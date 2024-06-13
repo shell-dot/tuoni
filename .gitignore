@@ -10,11 +10,13 @@
 /ssl/server/server-selfsigned.keystore
 /data/
 /logs/
+/nginx/tuoni.conf
 /payload-templates/
 /plugins/server/*
 /plugins/client/*
-/nginx/tuoni.conf
 /scripts/tools/*
+/scripts/transfer-custom.sh
+/transfer
 !/scripts/tools/.gitkeep
 !.gitkeep
 

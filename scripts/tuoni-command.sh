@@ -128,6 +128,7 @@ fi
 
 if [ "$TUONI_COMMAND" == "clean-configuration" ]; then
   . "$PROJECT_ROOT/scripts/clean-configuration.sh"
+  ${SUDO_COMMAND} COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
 fi
 
 if [ "$TUONI_COMMAND" == "update" ]; then

@@ -75,7 +75,7 @@ handle_server_command() {
     esac
 }
 
-if ! [[ "$TUONI_COMMAND" =~ ^(version|print-config-file|print-credentials|start|stop|restart|logs|clean-configuration|update|update-silent|client|server)$ ]]; then
+if ! [[ "$TUONI_COMMAND" =~ ^(version|print-config-file|print-credentials|start|stop|restart|logs|clean-configuration|update|update-silent|update-docker-images|client|server)$ ]]; then
   cat << EOF
 $(tput bold)TUONI Command Line Interface (CLI) - Version $VERSION$(tput sgr0)
 
@@ -96,6 +96,7 @@ $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     $(tput setaf 3)clean-configuration$(tput sgr0)  Prompt which configuration files to remove and resets them to default.
     $(tput setaf 3)update$(tput sgr0)               Perform git and docker pull.
     $(tput setaf 3)update-silent$(tput sgr0)        Perform git and docker pull silently.
+    $(tput setaf 3)update-docker-images$(tput sgr0) Perform docker pull.
 
 $(tput smul)ADDITIONAL INFORMATION:$(tput rmul)
     Tuoni URL:           $(tput setaf 4)https://localhost:12702/$(tput sgr0)
@@ -135,6 +136,10 @@ fi
 
 if [ "$TUONI_COMMAND" == "update-silent" ]; then
   SILENT=1 . "$PROJECT_ROOT/scripts/update.sh"
+fi
+
+if [ "$TUONI_COMMAND" == "update-docker-images" ]; then
+  ${SUDO_COMMAND} COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} pull
 fi
 
 if [ "$TUONI_COMMAND" == "logs" ]; then

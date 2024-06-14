@@ -57,8 +57,13 @@ esac
 ENV_PATH="$PROJECT_ROOT/config/tuoni.env"
 CONFIG_PATH="$PROJECT_ROOT/config/tuoni.yml"
 
-${SUDO_COMMAND} docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml down -v --rmi all --remove-orphans
-echo "INFO |Tuoni docker containers stopped and removed."
+echo "INFO | Tuoni dockers will be stopped ..."
+TUONI_DOCKER_COMPOSE_COMMAND="docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml"
+
+echo "${SUDO_COMMAND} COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} stop"
+${SUDO_COMMAND} COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} stop
+${SUDO_COMMAND} COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} rm -fv
+echo "INFO | Tuoni docker containers stopped and removed."
 
 if [[ ${choices[0]} ]]; then
   rm ${ENV_PATH} || true

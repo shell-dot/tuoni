@@ -45,7 +45,7 @@ if [[ ! $($PROJECT_ROOT/scripts/tools/yq '.client.port' $TUONI_CONFIG_FILE_PATH)
   $PROJECT_ROOT/scripts/tools/yq '.client = load("'$TUONI_CONFIG_EXAMPLE_FILE_PATH'").client' --inplace $TUONI_CONFIG_FILE_PATH 
 fi
 
-for dir in data logs/server logs/client logs/nginx payload-templates plugins; do
+for dir in data logs/server logs/client logs/nginx payload-templates plugins transfer; do
     if [ ! -d "$PROJECT_ROOT/$dir" ]; then
         echo "INFO | $dir directory not found, creating ..."
         mkdir -p "$PROJECT_ROOT/$dir"

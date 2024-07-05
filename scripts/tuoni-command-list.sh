@@ -17,15 +17,18 @@ tuoni_commands_array=(
     "import-docker-images" \
     "transfer-docker-images" \
     "client" \
-    "server"
+    "server" \
+    "docs"
     )
 tuoni_client_commands_array=("start" "stop" "restart" "logs")
 tuoni_server_commands_array=("start" "stop" "restart" "logs")
+tuoni_docs_commands_array=("start" "stop" "restart" "logs")
 
 # Join arrays into space-separated strings for Bash
 tuoni_commands="${tuoni_commands_array[*]}"
 tuoni_client_commands="${tuoni_client_commands_array[*]}"
 tuoni_server_commands="${tuoni_server_commands_array[*]}"
+tuoni_docs_commands="${tuoni_docs_commands_array[*]}"
 
 # Join arrays into a pipe-separated string for regex
 tuoni_commands_regex=$(IFS='|'; echo "${tuoni_commands_array[*]}")

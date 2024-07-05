@@ -64,3 +64,12 @@ services:
       - ./ssl/client/client-private.pem:/etc/nginx/certs/tuoni.key:ro
       ### uncomment to direct logs to file
       ### - ./logs/nginx/:/var/log/nginx/:rw
+
+  tuoni-docs:
+    <<: *defaults
+    profiles: ["docs"]
+    container_name: tuoni-docs
+    hostname: tuoni-docs
+    image: ghcr.io/shell-dot/tuoni/docs:${VERSION}
+    ports:
+      - "${TUONI_DOCS_BIND}:${TUONI_DOCS_PORT}:8000"

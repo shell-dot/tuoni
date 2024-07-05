@@ -14,6 +14,15 @@ export TUONI_CLIENT_LOGGER_LEVEL=$($PROJECT_ROOT/scripts/tools/yq '.client.logge
 export TUONI_CLIENT_LOGGER_SH=$($PROJECT_ROOT/scripts/tools/yq '.client.logger.sh' $TUONI_CONFIG_FILE_PATH)
 export TUONI_CLIENT_LOGGER_HEADERS=$($PROJECT_ROOT/scripts/tools/yq -o=json '.client.logger.headers' $TUONI_CONFIG_FILE_PATH | jq -c)
 
+export TUONI_DOCS_BIND=$($PROJECT_ROOT/scripts/tools/yq '.docs.bind' $TUONI_CONFIG_FILE_PATH)
+if [ -z "$TUONI_DOCS_BIND" ] || [[ $TUONI_DOCS_BIND == "null" ]]; then
+  export TUONI_DOCS_BIND=0.0.0.0
+fi
+export TUONI_DOCS_PORT=$($PROJECT_ROOT/scripts/tools/yq '.docs.port' $TUONI_CONFIG_FILE_PATH)
+if [ -z "$TUONI_DOCS_PORT" ] || [[ $TUONI_DOCS_PORT == "null" ]]; then
+  export TUONI_DOCS_PORT=8000
+fi
+
 TUONI_DOCKER_COMPOSE_COMMAND="docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml"
 
 TUONI_COMPONENT=$(basename "$0")
@@ -76,7 +85,35 @@ handle_server_command() {
     esac
 }
 
-if ! [[ "$TUONI_COMMAND" =~ ^(${tuoni_commands_regex})$ ]]; then
+# Function to handle docs commands
+handle_docs_command() {
+    local command="$1"
+    case "$command" in
+        start)
+            echo "INFO | Starting docs..."
+            echo "${SUDO_COMMAND} COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach"
+            ${SUDO_COMMAND} COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
+            echo "INFO | Tuoni docs url: https://localhost:${TUONI_DOCS_PORT}/"
+            ;;
+        stop)
+            echo "INFO | Stopping docs..."
+            ${SUDO_COMMAND} COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} stop
+            ;;
+        restart)
+            echo "INFO | Restarting docs..."
+            ${SUDO_COMMAND} COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
+            ;;
+        logs)
+            echo "INFO | Showing docs logs..."
+            ${SUDO_COMMAND} COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} logs -f
+            ;;
+        *)
+            echo "WARNING | Invalid docs command. Available commands: start, stop, restart, logs."
+            ;;
+    esac
+}
+
+if ! [[ "$TUONI_COMMAND" =~ ^(${tuoni_commands_regex})$ ]] || [[ "$TUONI_COMMAND" == "help" ]]; then
   cat << EOF
 $(tput bold)TUONI Command Line Interface (CLI) - Version $VERSION$(tput sgr0)
 
@@ -84,6 +121,7 @@ $(tput smul)USAGE:$(tput rmul)
     $(tput setaf 2)tuoni <command>$(tput sgr0)
     $(tput setaf 2)tuoni client <command>$(tput sgr0)
     $(tput setaf 2)tuoni server <command>$(tput sgr0)
+    $(tput setaf 2)tuoni docs <command>$(tput sgr0)
 
 $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     $(tput setaf 3)help$(tput sgr0)                   Display help.
@@ -191,6 +229,11 @@ fi
 if [ "$TUONI_COMMAND" == "server" ]; then
   handle_server_command "$TUONI_SUBCOMMAND"
 fi
+
+if [ "$TUONI_COMMAND" == "docs" ]; then
+  handle_docs_command "$TUONI_SUBCOMMAND"
+fi
+
 
 ### print the credentials during setup
 if [ -n "${TUONI_USERNAME_TO_CONFIG}" ]; then

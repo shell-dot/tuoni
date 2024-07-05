@@ -17,11 +17,13 @@ _tuoni_commands() {
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     if [[ ${prev} == "tuoni" ]]; then
-        COMPREPLY=($(compgen -W "${tuoni_commands} client server" -- "${cur}"))
+        COMPREPLY=($(compgen -W "${tuoni_commands} client server docs" -- "${cur}"))
     elif [[ ${COMP_WORDS[1]} == "client" ]]; then
         COMPREPLY=($(compgen -W "${tuoni_client_commands}" -- "${cur}"))
     elif [[ ${COMP_WORDS[1]} == "server" ]]; then
         COMPREPLY=($(compgen -W "${tuoni_server_commands}" -- "${cur}"))
+    elif [[ ${COMP_WORDS[1]} == "docs" ]]; then
+        COMPREPLY=($(compgen -W "${tuoni_docs_commands}" -- "${cur}"))        
     fi
 }
 
@@ -41,6 +43,8 @@ _tuoni_commands_zsh() {
                 _describe -t tuoni_client_commands_array 'tuoni client commands' tuoni_client_commands_array
             elif [[ ${words[2]} == "server" ]]; then
                 _describe -t tuoni_server_commands_array 'tuoni server commands' tuoni_server_commands_array
+            elif [[ ${words[2]} == "docs" ]]; then
+                _describe -t tuoni_docs_commands_array 'tuoni docs commands' tuoni_docs_commands_array
             fi
             ;;
     esac

@@ -14,15 +14,6 @@ export TUONI_CLIENT_LOGGER_LEVEL=$($PROJECT_ROOT/scripts/tools/yq '.client.logge
 export TUONI_CLIENT_LOGGER_SH=$($PROJECT_ROOT/scripts/tools/yq '.client.logger.sh' $TUONI_CONFIG_FILE_PATH)
 export TUONI_CLIENT_LOGGER_HEADERS=$($PROJECT_ROOT/scripts/tools/yq -o=json '.client.logger.headers' $TUONI_CONFIG_FILE_PATH | jq -c)
 
-export TUONI_DOCS_BIND=$($PROJECT_ROOT/scripts/tools/yq '.docs.bind' $TUONI_CONFIG_FILE_PATH)
-if [ -z "$TUONI_DOCS_BIND" ] || [[ $TUONI_DOCS_BIND == "null" ]]; then
-  export TUONI_DOCS_BIND=0.0.0.0
-fi
-export TUONI_DOCS_PORT=$($PROJECT_ROOT/scripts/tools/yq '.docs.port' $TUONI_CONFIG_FILE_PATH)
-if [ -z "$TUONI_DOCS_PORT" ] || [[ $TUONI_DOCS_PORT == "null" ]]; then
-  export TUONI_DOCS_PORT=8000
-fi
-
 TUONI_DOCKER_COMPOSE_COMMAND="docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml"
 
 TUONI_COMPONENT=$(basename "$0")
@@ -51,7 +42,7 @@ handle_client_command() {
             ;;
         logs)
             echo "INFO | Showing client logs ..."
-            ${SUDO_COMMAND} COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} logs -f
+            ${SUDO_COMMAND} COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
             ;;
         *)
             echo "WARNING | Invalid client command. Available commands: start, stop, restart, logs."
@@ -77,7 +68,7 @@ handle_server_command() {
             ;;
         logs)
             echo "INFO | Showing server logs..."
-            ${SUDO_COMMAND} COMPOSE_PROFILES=server ${TUONI_DOCKER_COMPOSE_COMMAND} logs -f
+            ${SUDO_COMMAND} COMPOSE_PROFILES=server ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
             ;;
         *)
             echo "WARNING | Invalid server command. Available commands: start, stop, restart, logs."
@@ -105,7 +96,7 @@ handle_docs_command() {
             ;;
         logs)
             echo "INFO | Showing docs logs..."
-            ${SUDO_COMMAND} COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} logs -f
+            ${SUDO_COMMAND} COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
             ;;
         *)
             echo "WARNING | Invalid docs command. Available commands: start, stop, restart, logs."
@@ -142,6 +133,7 @@ $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     
 $(tput smul)ADDITIONAL INFORMATION:$(tput rmul)
     Tuoni URL:           $(tput setaf 4)https://localhost:12702/$(tput sgr0)
+    Offline Docs:        $(tput setaf 4)https://localhost:12702/tuoni-docs/$(tput sgr0)
     Documentation:       $(tput setaf 4)https://docs.shelldot.com/$(tput sgr0)
     Configuration Path:  $(tput setaf 6)${PROJECT_ROOT}/config/tuoni.yml$(tput sgr0)
 
@@ -206,7 +198,7 @@ if [ "$TUONI_COMMAND" == "transfer-docker-images" ]; then
 fi
 
 if [ "$TUONI_COMMAND" == "logs" ]; then
-  ${SUDO_COMMAND} COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} logs -f
+  ${SUDO_COMMAND} COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
 fi
 
 if [ "$TUONI_COMMAND" == "start" ]; then

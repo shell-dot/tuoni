@@ -54,7 +54,7 @@ services:
     profiles: ["app", "client", "client-nginx"]
     container_name: tuoni-client-nginx
     hostname: tuoni-client-nginx
-    image: nginx:latest
+    image: nginx:alpine
     ports:
       - "${TUONI_CLIENT_PORT}:${TUONI_CLIENT_PORT}"
     volumes:
@@ -67,9 +67,8 @@ services:
 
   tuoni-docs:
     <<: *defaults
-    profiles: ["docs"]
+    profiles: ["app", "docs"]
     container_name: tuoni-docs
     hostname: tuoni-docs
     image: ghcr.io/shell-dot/tuoni/docs:${VERSION}
-    ports:
-      - "${TUONI_DOCS_BIND}:${TUONI_DOCS_PORT}:8000"
+    

@@ -69,7 +69,7 @@ fi
 
 if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
     echo "INFO | ssl/server/server-selfsigned.keystore file not found, creating ..."
-    echo $PROJECT_ROOT
+    echo "$PROJECT_ROOT"
     ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -v "${PROJECT_ROOT}/ssl/server:/tmp/hsperfdata_root" -w /tmp --user "$UID:$UID" openjdk:21-jdk-slim-bookworm \
       keytool -genkey -alias selfsigned \
       -keyalg RSA \
@@ -79,6 +79,11 @@ if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
       -dname "CN=localhost, OU=Tuoni, O=ShellDot, L=Tallinn, C=Estonia" \
       -keypass selfsigned -storepass \
       selfsigned
+    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -v "${PROJECT_ROOT}/ssl/server:/tmp/hsperfdata_root" -w /tmp --user "$UID:$UID" openjdk:21-jdk-slim-bookworm \
+      keytool -exportcert -alias selfsigned \
+      -keystore server-selfsigned.keystore \
+      -file /tmp/server-certificate.crt \
+      -rfc -storepass selfsigned
     ${SUDO_COMMAND} rmdir "${PROJECT_ROOT}/ssl/server/hsperfdata_root"
 fi
 

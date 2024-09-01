@@ -17,20 +17,13 @@ if ! command_exists "git"; then REQUIRED_PACKAGES+=('git'); fi
 if ! command_exists "rsync"; then REQUIRED_PACKAGES+=('rsync'); fi
 
 if [ ! -f "$PROJECT_ROOT/scripts/tools/yq" ]; then
-    echo "INFO | yq missing from $PROJECT_ROOT/scripts/tools, going to download ..."
-    ARCH=$(uname -m)
-    if [ "$ARCH" = "x86_64" ]; then
-        wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64 -O $PROJECT_ROOT/scripts/tools/yq
-    elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-        wget https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_arm64 -O $PROJECT_ROOT/scripts/tools/yq
-    else
-        echo -e "\n\n\n\n\n"
-        echo "ERROR | Unsupported architecture: $ARCH"
-        exit 1;
-    fi
+    echo "INFO | yq missing from $PROJECT_ROOT/scripts/tools, exporting from docker ..."
 
+    # Export yq from the tuoni-utility image
+    docker run --rm -v $PROJECT_ROOT/scripts/tools:/scripts ${TUONI_UTILITY_IMAGE} cp /usr/bin/yq /scripts/yq
+    
     chmod +x $PROJECT_ROOT/scripts/tools/yq
-    echo "INFO | yq has been downloaded to $PROJECT_ROOT/scripts/tools/yq."
+    echo "INFO | yq has been exported to $PROJECT_ROOT/scripts/tools/yq ..."
 fi
 
 # Install other missing packages

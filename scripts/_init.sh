@@ -12,7 +12,8 @@ if command -v "sudo" &>/dev/null; then
 fi
 
 PROJECT_ROOT="$( cd -- "$(dirname "$0")/" >/dev/null 2>&1 || exit ; pwd -P )"
+export TUONI_GIT_VERSION=$(grep version ${PROJECT_ROOT}/version.yml | cut -d':' -f2 | tr -d '[:space:]')
+export TUONI_UTILITY_IMAGE="ghcr.io/shell-dot/tuoni/utility:${TUONI_UTILITY_VERSION:-$TUONI_GIT_VERSION}"
 
 # This is required for the docker-compose.yml file know where to direct the traffic to.
-DOCKER_HOST_FQDN=$(hostname -f)
-export DOCKER_HOST_FQDN
+export DOCKER_HOST_FQDN=$(hostname -f)

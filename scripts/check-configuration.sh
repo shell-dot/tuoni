@@ -70,7 +70,7 @@ fi
 if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
     echo "INFO | ssl/server/server-selfsigned.keystore file not found, creating ..."
     echo "$PROJECT_ROOT"
-    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -v "${PROJECT_ROOT}/ssl/server:/tmp/hsperfdata_root" -w /tmp --user "$UID:$UID" openjdk:21-jdk-slim-bookworm \
+    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -v "${PROJECT_ROOT}/ssl/server:/tmp/hsperfdata_root" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
       keytool -genkey -alias selfsigned \
       -keyalg RSA \
       -keystore server-selfsigned.keystore \
@@ -79,7 +79,7 @@ if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
       -dname "CN=localhost, OU=Tuoni, O=ShellDot, L=Tallinn, C=Estonia" \
       -keypass selfsigned -storepass \
       selfsigned
-    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -v "${PROJECT_ROOT}/ssl/server:/tmp/hsperfdata_root" -w /tmp --user "$UID:$UID" openjdk:21-jdk-slim-bookworm \
+    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -v "${PROJECT_ROOT}/ssl/server:/tmp/hsperfdata_root" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
       keytool -exportcert -alias selfsigned \
       -keystore server-selfsigned.keystore \
       -file /tmp/server-certificate.crt \
@@ -89,20 +89,20 @@ fi
 
 if [ ! -f "$PROJECT_ROOT/ssl/server/server-private.pem" ]; then
     echo "INFO | ssl/server/server-private.pem file not found, creating ..."
-    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" openjdk:21-jdk-slim-bookworm \
+    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
       openssl genpkey -algorithm RSA -out server.pem -pkeyopt rsa_keygen_bits:2048
-    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" openjdk:21-jdk-slim-bookworm \
+    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
       openssl rsa -pubout -in server.pem -out server-public.pem
-    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" openjdk:21-jdk-slim-bookworm \
+    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
       openssl pkcs8 -topk8 -in server.pem -nocrypt -out server-private.pem
 fi
 
 if [ ! -f "$PROJECT_ROOT/ssl/client/client-private.pem" ]; then
     echo "INFO | ssl/client/client-private.pem file not found, creating ..."
-    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/client:/tmp" -w /tmp --user "$UID:$UID" openjdk:21-jdk-slim-bookworm \
+    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/client:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
       openssl genpkey -algorithm RSA -out client-private.pem -pkeyopt rsa_keygen_bits:2048
 
-    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/client:/tmp" -w /tmp --user "$UID:$UID" openjdk:21-jdk-slim-bookworm \
+    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/client:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
       openssl req -new -key client-private.pem -x509 -days 365 -out client.crt -subj "/C=EE/ST=YourState/L=YourCity/O=YourOrganization/CN=yourdomain.com"
 fi
 

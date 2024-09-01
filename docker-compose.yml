@@ -72,3 +72,10 @@ services:
     hostname: tuoni-docs
     image: ghcr.io/shell-dot/tuoni/docs:${VERSION}
     
+  tuoni-utility:
+    <<: *defaults
+    profiles: ["utility"]
+    container_name: tuoni-utility
+    hostname: tuoni-utility
+    image: ghcr.io/shell-dot/tuoni/utility:${VERSION}
+        

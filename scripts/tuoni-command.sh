@@ -14,7 +14,7 @@ export TUONI_CLIENT_LOGGER_LEVEL=$($PROJECT_ROOT/scripts/tools/yq '.client.logge
 export TUONI_CLIENT_LOGGER_SH=$($PROJECT_ROOT/scripts/tools/yq '.client.logger.sh' $TUONI_CONFIG_FILE_PATH)
 export TUONI_CLIENT_LOGGER_HEADERS=$($PROJECT_ROOT/scripts/tools/yq -o=json '.client.logger.headers' $TUONI_CONFIG_FILE_PATH | jq -c)
 
-TUONI_DOCKER_COMPOSE_COMMAND="docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml"
+export TUONI_DOCKER_COMPOSE_COMMAND="docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml"
 
 TUONI_COMPONENT=$(basename "$0")
 TUONI_COMMAND="$1"
@@ -174,8 +174,7 @@ if [ "$TUONI_COMMAND" == "update-silent" ]; then
 fi
 
 if [ "$TUONI_COMMAND" == "update-docker-images" ]; then
-  ${SUDO_COMMAND} COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} pull
-  ${SUDO_COMMAND} docker pull openjdk:21-jdk-slim-bookworm
+  ${SUDO_COMMAND} COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull
 fi
 
 if [ "$TUONI_COMMAND" == "export-docker-images" ]; then
@@ -184,8 +183,9 @@ if [ "$TUONI_COMMAND" == "export-docker-images" ]; then
   ${SUDO_COMMAND} docker save -o $PROJECT_ROOT/transfer/tuoni-docker-images.tar \
     ghcr.io/shell-dot/tuoni/server:${VERSION} \
     ghcr.io/shell-dot/tuoni/client:${VERSION} \
-    nginx:latest \
-    openjdk:21-jdk-slim-bookworm
+    ghcr.io/shell-dot/tuoni/utility:${VERSION} \
+    ghcr.io/shell-dot/tuoni/docs:${VERSION} \
+    nginx:latest
 fi
 
 if [ "$TUONI_COMMAND" == "import-docker-images" ]; then

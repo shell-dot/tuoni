@@ -35,8 +35,7 @@ LATEST_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)
 sed -i "s/VERSION=.*/VERSION=${LATEST_VERSION}/g" "${ENV_PATH}"
 
 echo "INFO | Pulling Tuoni ${LATEST_VERSION} docker images..."
-${SUDO_COMMAND} docker pull ghcr.io/shell-dot/tuoni/client:${LATEST_VERSION}
-${SUDO_COMMAND} docker pull ghcr.io/shell-dot/tuoni/server:${LATEST_VERSION}
+${SUDO_COMMAND} COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull
 
 echo -e "\n\n\n\n\n"
 echo "================================================================"

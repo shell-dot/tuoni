@@ -6,6 +6,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 . $PROJECT_ROOT/scripts/check-os.sh
 . $PROJECT_ROOT/scripts/check-packages.sh
 . $PROJECT_ROOT/scripts/check-docker.sh
+. $PROJECT_ROOT/scripts/check-tools.sh
 . $PROJECT_ROOT/scripts/check-configuration.sh
 . $PROJECT_ROOT/scripts/check-autocomplete.sh
 ### include env variables

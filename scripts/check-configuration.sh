@@ -65,12 +65,14 @@ if [ -f "$PROJECT_ROOT/logs/tuoni-server.log" ]; then
   ${SUDO_COMMAND} mv $PROJECT_ROOT/logs/tuoni-server.lo* $PROJECT_ROOT/logs/server/
 fi
 
-
-
 if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
     echo "INFO | ssl/server/server-selfsigned.keystore file not found, creating ..."
-    echo "$PROJECT_ROOT"
-    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -v "${PROJECT_ROOT}/ssl/server:/tmp/hsperfdata_root" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
+    
+    if [ -d "$PROJECT_ROOT/ssl/server/hsperfdata_root" ]; then
+      ${SUDO_COMMAND} rmdir "${PROJECT_ROOT}/ssl/server/hsperfdata_root"
+    fi
+
+    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
       keytool -genkey -alias selfsigned \
       -keyalg RSA \
       -keystore server-selfsigned.keystore \
@@ -79,12 +81,11 @@ if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
       -dname "CN=localhost, OU=Tuoni, O=ShellDot, L=Tallinn, C=Estonia" \
       -keypass selfsigned -storepass \
       selfsigned
-    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -v "${PROJECT_ROOT}/ssl/server:/tmp/hsperfdata_root" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
+    ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
       keytool -exportcert -alias selfsigned \
       -keystore server-selfsigned.keystore \
       -file /tmp/server-certificate.crt \
       -rfc -storepass selfsigned
-    ${SUDO_COMMAND} rmdir "${PROJECT_ROOT}/ssl/server/hsperfdata_root"
 fi
 
 if [ ! -f "$PROJECT_ROOT/ssl/server/server-private.pem" ]; then

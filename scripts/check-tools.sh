@@ -8,6 +8,6 @@ if [ ! -f "$PROJECT_ROOT/scripts/tools/yq" ]; then
     # Export yq from the tuoni-utility image
     ${SUDO_COMMAND} docker run --rm -v $PROJECT_ROOT/scripts/tools:/scripts ${TUONI_UTILITY_IMAGE} cp /usr/bin/yq /scripts/yq
     
-    chmod +x $PROJECT_ROOT/scripts/tools/yq
+    ${SUDO_COMMAND} chmod +x $PROJECT_ROOT/scripts/tools/yq
     echo "INFO | yq has been exported to $PROJECT_ROOT/scripts/tools/yq ..."
 fi

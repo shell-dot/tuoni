@@ -11,6 +11,22 @@ if [ ! -f "$PROJECT_ROOT/config/tuoni.env" ]; then
     cp $PROJECT_ROOT/config/example/example.tuoni.env ${TUONI_ENV_FILE_PATH}
 fi
 
+# Check if the TUONI_DOCKER_IPV6_ENABLED variable is set
+if [ "$TUONI_DOCKER_IPV6_ENABLED" ]; then
+
+    # Remove the TUONI_DOCKER_IPV6_ENABLED entry if it exists
+    sed -i '/^TUONI_DOCKER_IPV6_ENABLED=/d' $TUONI_ENV_FILE_PATH
+
+    # Ensure the file ends with a newline before appending, only if the file is non-empty
+    if [ -s "$TUONI_ENV_FILE_PATH" ] && [ "$(tail -c 1 "$TUONI_ENV_FILE_PATH")" != "" ]; then
+        echo "" >> "$TUONI_ENV_FILE_PATH"
+    fi
+    
+    echo "TUONI_DOCKER_IPV6_ENABLED=$TUONI_DOCKER_IPV6_ENABLED" >> $TUONI_ENV_FILE_PATH
+
+fi
+
+
 if [ ! -f "$PROJECT_ROOT/config/tuoni.yml" ]; then
     echo "INFO | config/tuoni.yml file not found, creating ..."
     cp $PROJECT_ROOT/config/example/example.tuoni.yml ${TUONI_CONFIG_FILE_PATH}

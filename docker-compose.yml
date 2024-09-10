@@ -13,6 +13,15 @@ x-defaults: &defaults
       max-size: 250m
       max-file: "1"
 
+networks:
+  tuoni-network:
+    driver: bridge
+    enable_ipv6: ${TUONI_DOCKER_IPV6_ENABLED:-false}
+    ipam:
+      driver: default
+      config:
+        - subnet: "fd00::/64"
+
 services:
   tuoni-server:
     <<: *defaults
@@ -48,7 +57,9 @@ services:
     volumes:
       - ./logs/client/:/srv/logs/client/:rw
       - ./plugins/client:/srv/user-defined-plugins/:ro
-
+    networks:
+      - tuoni-network
+      
   tuoni-client-nginx:
     <<: *defaults
     profiles: ["app", "client", "client-nginx"]
@@ -64,6 +75,8 @@ services:
       - ./ssl/client/client-private.pem:/etc/nginx/certs/tuoni.key:ro
       ### uncomment to direct logs to file
       ### - ./logs/nginx/:/var/log/nginx/:rw
+    networks:
+      - tuoni-network
 
   tuoni-docs:
     <<: *defaults
@@ -71,11 +84,14 @@ services:
     container_name: tuoni-docs
     hostname: tuoni-docs
     image: ghcr.io/shell-dot/tuoni/docs:${VERSION}
-    
+    networks:
+      - tuoni-network   
+
   tuoni-utility:
     <<: *defaults
     profiles: ["utility"]
     container_name: tuoni-utility
     hostname: tuoni-utility
     image: ghcr.io/shell-dot/tuoni/utility:${VERSION}
-        
+    networks:
+      - tuoni-network    

@@ -128,9 +128,26 @@ if [ ! -f "$PROJECT_ROOT/nginx/tuoni.conf" ]; then
     cp $PROJECT_ROOT/nginx/example/example.tuoni.conf $PROJECT_ROOT/nginx/tuoni.conf
 fi
 
-### make sure nginx has correct listen port from tuoni config file
+### make sure nginx has correct listen port from tuoni config file, do replace only for the first server block
 TUONI_CLIENT_PORT=$($PROJECT_ROOT/scripts/tools/yq '.client.port' $TUONI_CONFIG_FILE_PATH)
-sed -i "s/\(listen \)[0-9]\+\(.*\)/\1$TUONI_CLIENT_PORT\2/" $PROJECT_ROOT/nginx/tuoni.conf
+awk -i inplace -v port="$TUONI_CLIENT_PORT" '
+    BEGIN { in_server=0; server_count=0 }
+    /^server\s*{/ {
+        server_count++
+        if (server_count == 1) in_server=1
+        else in_server=0
+    }
+    {
+        if (in_server && /^\s*listen\s/) {
+            # Use gensub for proper backreference handling
+            $0 = gensub(/(listen\s(\[::\]:)?)[0-9]+(.*)/, "\\1" port "\\3", 1)
+        }
+        print
+        if (in_server && /^}/) {
+            in_server=0
+        }
+    }
+' $PROJECT_ROOT/nginx/tuoni.conf
 
 ${SUDO_COMMAND} chown $USER:$USER -R "${PROJECT_ROOT}/ssl"
 ${SUDO_COMMAND} chmod +r "${PROJECT_ROOT}/ssl"/*

@@ -15,6 +15,7 @@ if ! command_exists "curl"; then REQUIRED_PACKAGES+=('curl'); fi
 if ! command_exists "jq"; then REQUIRED_PACKAGES+=('jq'); fi
 if ! command_exists "git"; then REQUIRED_PACKAGES+=('git'); fi
 if ! command_exists "rsync"; then REQUIRED_PACKAGES+=('rsync'); fi
+if ! command_exists "gawk"; then REQUIRED_PACKAGES+=('gawk'); fi
 
 # Install other missing packages
 if [ "${#REQUIRED_PACKAGES[@]}" -ne 0 ]; then

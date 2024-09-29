@@ -132,8 +132,9 @@ $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     $(tput setaf 3)transfer-docker-images$(tput sgr0) Transfer docker images to remote defined in config/tuoni.yml.
     
 $(tput smul)ADDITIONAL INFORMATION:$(tput rmul)
-    Tuoni URL:           $(tput setaf 4)https://localhost:12702/$(tput sgr0)
-    Offline Docs:        $(tput setaf 4)https://localhost:12702/tuoni-docs/$(tput sgr0)
+    Tuoni URL:           $(tput setaf 4)https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/$(tput sgr0)
+    Tuoni URL Localhost: $(tput setaf 4)https://localhost:${TUONI_CLIENT_PORT}/$(tput sgr0)
+    Offline Docs:        $(tput setaf 4)https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/tuoni-docs/$(tput sgr0)
     Documentation:       $(tput setaf 4)https://docs.shelldot.com/$(tput sgr0)
     Configuration Path:  $(tput setaf 6)${PROJECT_ROOT}/config/tuoni.yml$(tput sgr0)
 
@@ -203,7 +204,7 @@ fi
 
 if [ "$TUONI_COMMAND" == "start" ]; then
   ${SUDO_COMMAND} COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
-  echo "INFO | Tuoni url: https://localhost:12702/"
+  echo "INFO | Tuoni url: https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/"
 fi
 
 if [ "$TUONI_COMMAND" == "stop" ]; then
@@ -230,7 +231,7 @@ fi
 ### print the credentials during setup
 if [ -n "${TUONI_USERNAME_TO_CONFIG}" ]; then
   echo -e "\n\n\n\n\n"
-  echo "INFO | tuoni url: https://localhost:12702/"
-  echo "INFO | tuoni username: ${TUONI_USERNAME_TO_CONFIG}"
-  echo "INFO | tuoni password: ${TUONI_PASSWORD_TO_CONFIG}"
+  echo "INFO | Tuoni url: https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/"
+  echo "INFO | Tuoni username: ${TUONI_USERNAME_TO_CONFIG}"
+  echo "INFO | Tuoni password: ${TUONI_PASSWORD_TO_CONFIG}"
 fi

@@ -6,7 +6,7 @@ x-defaults: &defaults
   extra_hosts:
     - host.docker.internal:host-gateway
     - local-c2:host-gateway
-    - ${DOCKER_HOST_FQDN}:host-gateway
+    - ${TUONI_HOST_FQDN}:host-gateway
   logging:
     driver: json-file
     options:

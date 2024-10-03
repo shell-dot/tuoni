@@ -7,6 +7,7 @@ CONFIG_PATH="$PROJECT_ROOT/config/tuoni.yml"
 
 if [[ "$NO_UPDATE" == "1" ]]; then
   echo "INFO | NO_UPDATE=1 is set. Skipping update ..."
+  return;
 fi
 
 # Skip prompt if SILENT is set to 1

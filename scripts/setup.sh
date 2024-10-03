@@ -21,8 +21,10 @@ if [ ! -d "/srv/tuoni" ]; then
   git clone https://github.com/shell-dot/tuoni.git /srv/tuoni
   cd /srv/tuoni
   ./tuoni start
+elif [[ "$NO_UPDATE" == "1" ]]; then
+  echo "INFO | tuoni directory already exists and NO_UPDATE=1 is set. Skipping update ..."
 else
-  echo "INFO | tuoni directory already exists. Skipping git clone ..."
+  echo "INFO | tuoni directory already exists. Updating ..."
   cd /srv/tuoni
   ./tuoni update-silent
 fi

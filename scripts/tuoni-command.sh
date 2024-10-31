@@ -11,7 +11,6 @@ export TUONI_CLIENT_PORT=$($PROJECT_ROOT/scripts/tools/yq '.client.port' $TUONI_
 export TUONI_CLIENT_LOGGER_ENABLED=$($PROJECT_ROOT/scripts/tools/yq '.client.logger.to_file' $TUONI_CONFIG_FILE_PATH)
 export TUONI_CLIENT_LOGGER_CONSOLE=$($PROJECT_ROOT/scripts/tools/yq '.client.logger.to_console' $TUONI_CONFIG_FILE_PATH)
 export TUONI_CLIENT_LOGGER_LEVEL=$($PROJECT_ROOT/scripts/tools/yq '.client.logger.level' $TUONI_CONFIG_FILE_PATH)
-export TUONI_CLIENT_LOGGER_SH=$($PROJECT_ROOT/scripts/tools/yq '.client.logger.sh' $TUONI_CONFIG_FILE_PATH)
 export TUONI_CLIENT_LOGGER_HEADERS=$($PROJECT_ROOT/scripts/tools/yq -o=json '.client.logger.headers' $TUONI_CONFIG_FILE_PATH | jq -c)
 
 export TUONI_DOCKER_COMPOSE_COMMAND="docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml"

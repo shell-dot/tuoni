@@ -162,6 +162,11 @@ if [ "$TUONI_COMMAND" == "print-credentials" ]; then
 fi
 
 if [ "$TUONI_COMMAND" == "change-credentials" ]; then
+  if [[ "$(printf '%s\n' "0.6.2" "$VERSION" | sort -V | head -n1)" != "0.6.2" ]]; then
+    echo "ERROR | This command is only available for Tuoni version 0.6.2 and above."
+    exit 1
+  fi
+
   echo "INFO | Start changing credentials ..."
   echo -e "\n\n\n\n\n"
 

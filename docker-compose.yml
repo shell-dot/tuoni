@@ -53,7 +53,6 @@ services:
       - NUXT_LOGGER_CONSOLE=${TUONI_CLIENT_LOGGER_CONSOLE}
       - NUXT_LOGGER_LEVEL=${TUONI_CLIENT_LOGGER_LEVEL}
       - NUXT_LOGGER_HEADERS=${TUONI_CLIENT_LOGGER_HEADERS}
-      - NUXT_LOGGER_SH=${TUONI_CLIENT_LOGGER_SH}
     volumes:
       - ./logs/client/:/srv/logs/client/:rw
       - ./plugins/client:/srv/user-defined-plugins/:ro

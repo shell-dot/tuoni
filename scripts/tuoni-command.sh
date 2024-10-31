@@ -119,6 +119,7 @@ $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     $(tput setaf 3)version$(tput sgr0)                Display version.
     $(tput setaf 3)print-config-file$(tput sgr0)      Display config file.
     $(tput setaf 3)print-credentials$(tput sgr0)      Display tuoni credentials.
+    $(tput setaf 3)change-credentials$(tput sgr0)     Change user credentials.
     $(tput setaf 3)start$(tput sgr0)                  Starts the Tuoni dockers.
     $(tput setaf 3)stop$(tput sgr0)                   Stops the Tuoni dockers.
     $(tput setaf 3)restart$(tput sgr0)                Restarts the Tuoni dockers.
@@ -159,6 +160,51 @@ fi
 if [ "$TUONI_COMMAND" == "print-credentials" ]; then
   echo "INFO | Printing credentials from ${PROJECT_ROOT}/config/tuoni.yml ..."
   ${PROJECT_ROOT}/scripts/tools/yq '.tuoni.auth.credentials' ${PROJECT_ROOT}/config/tuoni.yml
+fi
+
+if [ "$TUONI_COMMAND" == "change-credentials" ]; then
+  echo "INFO | Start changing credentials ..."
+  echo -e "\n\n\n\n\n"
+
+  # Prompt for username
+  read -r -p "INPUT | Enter username to change: " input_username </dev/tty
+  if [[ -z "$input_username" ]]; then
+    echo "ERROR | Username cannot be blank."
+    exit 1
+  fi
+
+  # Escape username for SQLite
+  escaped_username=$(printf '%q' "$input_username")
+
+  # Check if the username exists in the database
+  user_exists=$(${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/data/tuoni-db.sqlite3:/tmp/tuoni-db.sqlite3" \
+    -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} sqlite3 /tmp/tuoni-db.sqlite3 \
+    "SELECT COUNT(*) FROM users WHERE username='$escaped_username';")
+
+  if [ "$user_exists" -eq 0 ]; then
+    echo "ERROR | Username '$input_username' does not exist."
+    exit 1
+  fi
+
+  # Prompt for password
+  read -r -p "INPUT | Enter password for user [$escaped_username]: " input_password </dev/tty
+  if [[ -z "$input_password" ]]; then
+    echo "ERROR | Password cannot be blank."
+    exit 1
+  fi
+
+  # Generate bcrypt hash for the password
+  HASH=$( ${SUDO_COMMAND} docker run --rm -w /tmp --user "$UID:$UID" \
+    ${TUONI_UTILITY_IMAGE} htpasswd -nbB "${input_username}" "${input_password}" | cut -d ":" -f 2 )
+
+  SQL_STATEMENT="UPDATE users SET password='{bcrypt}$HASH' WHERE username='$escaped_username';"
+
+  # Run the SQLite command inside Docker
+  ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/data/tuoni-db.sqlite3:/tmp/tuoni-db.sqlite3" \
+    -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} sqlite3 /tmp/tuoni-db.sqlite3 "$SQL_STATEMENT"
+
+  echo "INFO | Credentials for user '$escaped_username' have been updated ..."
+
 fi
 
 if [ "$TUONI_COMMAND" == "clean-configuration" ]; then

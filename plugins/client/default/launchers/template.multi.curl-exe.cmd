@@ -1,1 +1,1 @@
-curl.exe %%isHTTPS%% %%url%% -o %%filename%% && %%filename%%
+curl.exe %%isHTTPS%% "%%url%%" -o %%filename%% && %%filename%%

@@ -1,0 +1,1 @@
+curl %%isHTTPS%% "%%url%%" -o %%filename%% && chmod +x %%filename%% &&  %%filename%%

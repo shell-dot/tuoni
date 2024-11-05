@@ -1,6 +1,6 @@
 ---
 name: Example PowerShell Launcher Plugin by ShellDot
-version: 0.5.0
+version: 0.7.0
 description: |
   Example Powershell All Plugin for ShellDot. This plugin provides a single launcher that uses HTTP listeners' payload hosting feature
   to download and execute a file in PowerShell. This launcher is compatible with all types of payloads except for SHELLCODE.

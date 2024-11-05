@@ -1,1 +1,1 @@
-%%isHTTPS%% (New-Object System.Net.WebClient).DownloadFile('%%url%%', '%%filename%%');%%execution%%
+%%isHTTPS%% (New-Object System.Net.WebClient).DownloadFile('%%url%%', "$HOME\\%%filename%%");%%execution%%

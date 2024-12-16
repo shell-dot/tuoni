@@ -5,7 +5,7 @@ set +e
 echo "INFO | Running transfer ..."
 echo "INFO | if you encounter errors you might have to adjust permissions on the remote server or create a new ${PROJECT_ROOT}/scripts/transfer-custom.sh script ..."
 
-### if transfer-custom.sh exists, run it, otherwise use builtin rsync
+# If transfer-custom.sh exists, run it, otherwise use builtin rsync
 if [ -f "$PROJECT_ROOT/scripts/transfer-custom.sh" ]; then
      echo "INFO | Using ${PROJECT_ROOT}/scripts/transfer-custom.sh for transfer ..."
      . $PROJECT_ROOT/scripts/transfer-custom.sh
@@ -19,7 +19,7 @@ else
           exit 1
      fi
 
-     ### check if /srv/tuoni/scripts/tools exists on remote and rync
+     # Check if /srv/tuoni/scripts/tools exists on remote and rsync
      if ! ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST '[ -d /srv/tuoni/scripts/tools ]'; then
           echo -e "\n\n\n\n"
           echo "ERROR | /srv/tuoni/scripts/tools not found on remote, does ${TRANSFER_REMOTE_HOST} have tuoni files?"
@@ -29,7 +29,7 @@ else
           rsync -avz --progress "$PROJECT_ROOT/scripts/tools/" "$TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/scripts/tools"
      fi
 
-     ### rsync the transfer directory
+     # Rsync the transfer directory
      echo "INFO | deleting remote $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer folder ..."
      ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo -E rm -rf /srv/tuoni/transfer'
      
@@ -39,6 +39,5 @@ else
 
      echo "INFO | rsyncing $PROJECT_ROOT/transfer/ to $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer ..."
      rsync -avz --progress "$PROJECT_ROOT/transfer/" "$TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer"
-     
 fi
 

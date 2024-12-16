@@ -24,11 +24,11 @@ fi
 
 # Check if Docker Compose is installed and its version
 if [ "$docker_installed" -eq 1 ]; then
-    # Adjusted command to correctly capture and parse the Docker Compose version
-    installed_compose_version=$(${SUDO_COMMAND} docker compose version | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | cut -c 2-)
-    if version_gte "$installed_compose_version" "2.0.0"; then
-        docker_compose_version_ok=1
-    fi
+  # Adjusted command to correctly capture and parse the Docker Compose version
+  installed_compose_version=$(${SUDO_COMMAND} docker compose version | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | cut -c 2-)
+  if version_gte "$installed_compose_version" "2.0.0"; then
+    docker_compose_version_ok=1
+  fi
 fi
 
 # Correct the condition to exit if both Docker and Docker Compose versions are OK
@@ -39,8 +39,7 @@ if [ "$docker_version_ok" -eq 1 ] && [ "$docker_compose_version_ok" -eq 1 ]; the
     ${SUDO_COMMAND} systemctl start docker
     echo "INFO | Docker service started."
   fi
-  #echo "INFO | Docker and Docker Compose meet the required version. Exiting the installation script."
-  return;
+  return
 fi
 
 # If Docker is not installed, proceed without prompt
@@ -69,7 +68,9 @@ else
   ${SUDO_COMMAND} systemctl stop docker --quiet
   ${SUDO_COMMAND} systemctl disable docker --quiet
   # Remove all docker related packages, list taken from docker docs
-  for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do ${SUDO_COMMAND} apt-get remove -y $pkg || true; done
+  for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do 
+    ${SUDO_COMMAND} apt-get remove -y $pkg || true
+  done
   ${SUDO_COMMAND} systemctl daemon-reload
 fi
 
@@ -111,7 +112,7 @@ set +e
 
 # Check if Docker is running, and start it if not
 if ! ${SUDO_COMMAND} systemctl is-active --quiet docker; then
-    ${SUDO_COMMAND} systemctl start docker
+  ${SUDO_COMMAND} systemctl start docker
 fi
 
 # Initial sleep duration
@@ -119,21 +120,21 @@ sleep_duration=2
 
 # Try to start Docker service up to 10 times
 for i in {1..10}; do
-    if ${SUDO_COMMAND} systemctl is-active --quiet docker; then
-        echo "INFO | Docker is running."
-        break
-    else
-        echo "INFO | Attempt $i to start Docker ..."
-        echo "INFO | Sleeping for $sleep_duration seconds..."
-        sleep $sleep_duration  # Add a brief delay between attempts
-        sleep_duration=$((sleep_duration + 2))  # Increase sleep duration by 2 seconds each time
-        ${SUDO_COMMAND} systemctl reset-failed docker.service
-        ${SUDO_COMMAND} systemctl start docker
-    fi
+  if ${SUDO_COMMAND} systemctl is-active --quiet docker; then
+    echo "INFO | Docker is running."
+    break
+  else
+    echo "INFO | Attempt $i to start Docker ..."
+    echo "INFO | Sleeping for $sleep_duration seconds..."
+    sleep $sleep_duration  # Add a brief delay between attempts
+    sleep_duration=$((sleep_duration + 2))  # Increase sleep duration by 2 seconds each time
+    ${SUDO_COMMAND} systemctl reset-failed docker.service
+    ${SUDO_COMMAND} systemctl start docker
+  fi
 done
 
 # Final check if Docker failed to start
 if ! ${SUDO_COMMAND} systemctl is-active --quiet docker; then
-    echo "ERROR | Failed to start Docker after 10 attempts ..."
-    exit 1;
+  echo "ERROR | Failed to start Docker after 10 attempts ..."
+  exit 1
 fi

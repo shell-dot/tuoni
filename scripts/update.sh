@@ -5,6 +5,7 @@ set -e
 ENV_PATH="$PROJECT_ROOT/config/tuoni.env"
 CONFIG_PATH="$PROJECT_ROOT/config/tuoni.yml"
 
+# Check if NO_UPDATE is set to 1
 if [[ "$NO_UPDATE" == "1" ]]; then
   echo "INFO | NO_UPDATE=1 is set. Skipping update ..."
   return;
@@ -26,16 +27,16 @@ if [[ "$SILENT" != "1" ]]; then
     esac
 fi
 
-echo "INFO | Tuoni is going to stopped ..."
+echo "INFO | Tuoni is going to be stopped ..."
 
 $PROJECT_ROOT/tuoni stop
 
 echo "INFO | Running Tuoni update script ..."
 
-### update scripts and repo
+# Update scripts and repo
 cd $PROJECT_ROOT && git pull
 
-### update the image version in env file
+# Update the image version in env file
 TUONI_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)
 sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION}/g" "$PROJECT_ROOT/config/tuoni.env"
 
@@ -48,6 +49,7 @@ echo "INFO | Update script finished - tuoni will be restarted."
 echo "================================================================"
 echo -e "\n\n\n\n\n"
 
+# Run post-update checks
 . $PROJECT_ROOT/scripts/check-packages.sh
 . $PROJECT_ROOT/scripts/check-docker.sh
 . $PROJECT_ROOT/scripts/check-configuration.sh

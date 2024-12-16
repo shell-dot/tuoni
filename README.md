@@ -32,12 +32,12 @@ Installer will try to install docker version 25.0.0 or greater
 
 ```bash
 wget  -O - https://tuoni.sh | bash
-cd tuoni
+cd /srv/tuoni
 ```
 or if you prefer curl
 ```
 curl https://tuoni.sh | bash
-cd tuoni
+cd /srv/tuoni
 ```
 
 ---

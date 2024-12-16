@@ -15,7 +15,7 @@ else
           echo -e "\n\n\n\n"
           echo "ERROR | TRANSFER_REMOTE_USER or TRANSFER_REMOTE_HOST environment variable not set"
           echo "ERROR | Please export the environment variables TRANSFER_REMOTE_USER=x TRANSFER_REMOTE_HOST=x before running this command eg:"
-          echo "export TRANSFER_REMOTE_USER=ubuntu; export TRANSFER_REMOTE_HOST=1.2.3.4;"
+          echo "export TRANSFER_REMOTE_USER=your-remote-host-ssh-username; export TRANSFER_REMOTE_HOST=your-remote-host-ssh-ip-address;"
           exit 1
      fi
 
@@ -28,18 +28,17 @@ else
           echo "INFO | /srv/tuoni/scripts/tools found on remote, rsyncing ..."
           rsync -avz --progress "$PROJECT_ROOT/scripts/tools/" "$TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/scripts/tools"
      fi
-     
-     if ! ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST '[ -d /srv/tuoni/transfer ]'; then
-          echo -e "\n\n\n\n"
-          echo "WARNING | /srv/tuoni/transfer not found on remote, will attempt to create it ..."
-          ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo -E mkdir -p /srv/tuoni/transfer'
-          ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo -E chown $(id -u):$(id -g) -R /srv/tuoni/transfer'
-     fi
 
      ### rsync the transfer directory
+     echo "INFO | deleting remote $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer folder ..."
+     ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo -E rm -rf /srv/tuoni/transfer'
+     
+     echo "INFO | recreating remote $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer folder ..."
+     ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo -E mkdir /srv/tuoni/transfer'
+     ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo -E chown $(id -u):$(id -g) -R /srv/tuoni/transfer'
+
      echo "INFO | rsyncing $PROJECT_ROOT/transfer/ to $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer ..."
      rsync -avz --progress "$PROJECT_ROOT/transfer/" "$TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer"
-     ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo -E docker load -i /srv/tuoni/transfer/tuoni-docker-images.tar'
      
 fi
 

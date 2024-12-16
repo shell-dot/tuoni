@@ -36,8 +36,8 @@ echo "INFO | Running Tuoni update script ..."
 cd $PROJECT_ROOT && git pull
 
 ### update the image version in env file
-LATEST_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)
-sed -i "s/VERSION=.*/VERSION=${LATEST_VERSION}/g" "${ENV_PATH}"
+TUONI_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)
+sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION}/g" "$PROJECT_ROOT/config/tuoni.env"
 
 echo "INFO | Pulling Tuoni ${LATEST_VERSION} docker images..."
 ${SUDO_COMMAND} COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull

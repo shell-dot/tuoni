@@ -129,7 +129,9 @@ $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     $(tput setaf 3)update-docker-images$(tput sgr0)   Perform docker pull.
     $(tput setaf 3)export-docker-images$(tput sgr0)   Export docker images to transfer folder.
     $(tput setaf 3)import-docker-images$(tput sgr0)   Import docker images from transfer folder.
-    $(tput setaf 3)transfer-docker-images$(tput sgr0) Transfer docker images to remote defined in config/tuoni.yml.
+    $(tput setaf 3)transfer-tuoni-package$(tput sgr0) Rsync transfer folder to remote defined in config/tuoni.env.
+    $(tput setaf 3)export-tuoni-package$(tput sgr0)   Export current git repository and docker images to transfer folder.
+    $(tput setaf 3)import-tuoni-package$(tput sgr0)   Import git repository and docker images from transfer folder.
     
 $(tput smul)ADDITIONAL INFORMATION:$(tput rmul)
     Tuoni URL:           $(tput setaf 4)https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/$(tput sgr0)
@@ -228,7 +230,7 @@ if [ "$TUONI_COMMAND" == "update-docker-images" ]; then
   ${SUDO_COMMAND} COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull
 fi
 
-if [ "$TUONI_COMMAND" == "export-docker-images" ]; then
+if [ "$TUONI_COMMAND" == "export-docker-images" ] || [ "$TUONI_COMMAND" == "export-tuoni-package" ]; then
   echo "INFO | Exporting docker images to $PROJECT_ROOT/transfer/tuoni-docker-images.tar ..."
   ${SUDO_COMMAND} rm -f $PROJECT_ROOT/transfer/tuoni-docker-images.tar
   ${SUDO_COMMAND} docker save -o $PROJECT_ROOT/transfer/tuoni-docker-images.tar \
@@ -239,12 +241,35 @@ if [ "$TUONI_COMMAND" == "export-docker-images" ]; then
     nginx:latest
 fi
 
-if [ "$TUONI_COMMAND" == "import-docker-images" ]; then
+if [ "$TUONI_COMMAND" == "export-tuoni-package" ]; then
+  echo "INFO | Exporting current git repository to $PROJECT_ROOT/transfer/git ..."
+  rm -rf $PROJECT_ROOT/transfer/git
+  mkdir -p $PROJECT_ROOT/transfer/git
+  git clone --mirror $PROJECT_ROOT $PROJECT_ROOT/transfer/git
+  echo "INFO | Git repository exported to $PROJECT_ROOT/transfer/git"
+fi
+
+if [ "$TUONI_COMMAND" == "import-tuoni-package" ]; then
+  echo "INFO | Importing git repository from $PROJECT_ROOT/transfer/git ..."
+  cd $PROJECT_ROOT
+  if git remote | grep -q transfer; then
+    git remote remove transfer
+  fi
+  git remote add transfer $PROJECT_ROOT/transfer/git
+  git fetch transfer
+  git pull transfer main
+  echo "INFO | Git repository updated from $PROJECT_ROOT/transfer/git"
+
+  TUONI_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)
+  sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION}/g" "$PROJECT_ROOT/config/tuoni.env"
+fi
+
+if [ "$TUONI_COMMAND" == "import-docker-images" ] || [ "$TUONI_COMMAND" == "import-tuoni-package" ]; then
   echo "INFO | Importing docker images from $PROJECT_ROOT/transfer/tuoni-docker-images.tar ..."
   ${SUDO_COMMAND} docker load -i $PROJECT_ROOT/transfer/tuoni-docker-images.tar
 fi
 
-if [ "$TUONI_COMMAND" == "transfer-docker-images" ]; then
+if [ "$TUONI_COMMAND" == "transfer-tuoni-package" ]; then
   . "$PROJECT_ROOT/scripts/transfer.sh"
 fi
 

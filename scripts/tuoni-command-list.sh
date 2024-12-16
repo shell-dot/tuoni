@@ -16,7 +16,9 @@ tuoni_commands_array=(
     "update-docker-images" \
     "export-docker-images" \
     "import-docker-images" \
-    "transfer-docker-images" \
+    "transfer-tuoni-package" \
+    "export-tuoni-package" \
+    "import-tuoni-package" \
     "client" \
     "server" \
     "docs"

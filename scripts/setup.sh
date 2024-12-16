@@ -7,6 +7,7 @@ if command -v "sudo" &>/dev/null; then
   SUDO_COMMAND="sudo -E"
 fi
 
+# Install git if not found
 if ! command -v "git" &>/dev/null; then
   echo "INFO | git is not found, installing ..."
   ${SUDO_COMMAND} apt-get update && ${SUDO_COMMAND} apt-get install git -y

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Define arrays for Tuoni commands and subcommands
 tuoni_commands_array=(
     "help" \
     "version" \
@@ -22,7 +23,8 @@ tuoni_commands_array=(
     "client" \
     "server" \
     "docs"
-    )
+)
+
 tuoni_client_commands_array=("start" "stop" "restart" "logs")
 tuoni_server_commands_array=("start" "stop" "restart" "logs")
 tuoni_docs_commands_array=("start" "stop" "restart" "logs")

@@ -302,8 +302,7 @@ if [ "$TUONI_COMMAND" == "docs" ]; then
   handle_docs_command "$TUONI_SUBCOMMAND"
 fi
 
-
-### print the credentials during setup
+# Display Tuoni URL, username, and password during setup
 if [ -n "${TUONI_USERNAME_TO_CONFIG}" ]; then
   echo -e "\n\n\n\n\n"
   echo "INFO | Tuoni url: https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/"

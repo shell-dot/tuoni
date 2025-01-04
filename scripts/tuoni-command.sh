@@ -238,7 +238,7 @@ if [ "$TUONI_COMMAND" == "export-docker-images" ] || [ "$TUONI_COMMAND" == "expo
     ghcr.io/shell-dot/tuoni/client:${VERSION} \
     ghcr.io/shell-dot/tuoni/utility:${VERSION} \
     ghcr.io/shell-dot/tuoni/docs:${VERSION} \
-    nginx:latest
+    nginx:alpine
 fi
 
 if [ "$TUONI_COMMAND" == "export-tuoni-package" ]; then

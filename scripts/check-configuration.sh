@@ -13,6 +13,11 @@ if [ ! -f "$TUONI_ENV_FILE_PATH" ]; then
   cp $PROJECT_ROOT/config/example/example.tuoni.env ${TUONI_ENV_FILE_PATH}
 fi
 
+# Use the Tuoni version from env
+if [[ ! -z "${TUONI_VERSION+x}" ]]; then
+  sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION}/g" ${TUONI_ENV_FILE_PATH}
+fi
+
 # Check if TUONI_DOCKER_IPV6_ENABLED variable is set
 if [ "$TUONI_DOCKER_IPV6_ENABLED" ]; then
   # Remove existing TUONI_DOCKER_IPV6_ENABLED entry

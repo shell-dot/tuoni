@@ -19,7 +19,12 @@ fi
 # Set project root directory
 PROJECT_ROOT="$( cd -- "$(dirname "$0")/" >/dev/null 2>&1 || exit ; pwd -P )"
 
+# TUONI_VERSION from env
+if [[ ! -z "${TUONI_VERSION+x}" ]]; then
+  echo "INFO | TUONI_VERSION set in env: $TUONI_VERSION ..."
+fi
+
 # Export necessary environment variables
 export TUONI_GIT_VERSION=$(grep version ${PROJECT_ROOT}/version.yml | cut -d':' -f2 | tr -d '[:space:]')
-export TUONI_UTILITY_IMAGE="ghcr.io/shell-dot/tuoni/utility:${TUONI_UTILITY_VERSION:-$TUONI_GIT_VERSION}"
+export TUONI_UTILITY_IMAGE="ghcr.io/shell-dot/tuoni/utility:${TUONI_VERSION:-$TUONI_GIT_VERSION}"
 export TUONI_HOST_FQDN=$(hostname -f) # Required for docker-compose.yml to direct traffic

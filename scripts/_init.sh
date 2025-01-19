@@ -7,10 +7,13 @@ if [[ "$SILENT" == "1" ]]; then
   echo "INFO | Silent mode enabled, no confirmation prompts ..."
 fi
 
-# Determine if sudo is available
-SUDO_COMMAND=
-if command -v "sudo" &>/dev/null; then
-  SUDO_COMMAND="sudo -E"
+# SUDO_COMMAND default value
+if [[ -z "${SUDO_COMMAND+x}" ]]; then
+  SUDO_COMMAND=""
+  if command -v "sudo" &>/dev/null; then
+    SUDO_COMMAND="sudo -E"
+    echo "INFO | tuoni default SUDO_COMMAND to: $SUDO_COMMAND ..."
+  fi
 fi
 
 # Set project root directory

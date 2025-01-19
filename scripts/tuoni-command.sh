@@ -260,8 +260,8 @@ if [ "$TUONI_COMMAND" == "import-tuoni-package" ]; then
   git pull transfer main
   echo "INFO | Git repository updated from $PROJECT_ROOT/transfer/git"
 
-  TUONI_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)
-  sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION}/g" "$PROJECT_ROOT/config/tuoni.env"
+  TUONI_IMPORT_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)
+  sed -i "s/VERSION=.*/VERSION=${TUONI_IMPORT_VERSION}/g" "$PROJECT_ROOT/config/tuoni.env"
 fi
 
 if [ "$TUONI_COMMAND" == "import-docker-images" ] || [ "$TUONI_COMMAND" == "import-tuoni-package" ]; then

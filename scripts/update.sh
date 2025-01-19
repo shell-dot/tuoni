@@ -41,7 +41,7 @@ TUONI_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)
 sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION}/g" "$PROJECT_ROOT/config/tuoni.env"
 
 echo "INFO | Pulling Tuoni ${LATEST_VERSION} docker images..."
-${SUDO_COMMAND} COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull
+${SUDO_COMMAND} env COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull
 
 echo -e "\n\n\n\n\n"
 echo "================================================================"

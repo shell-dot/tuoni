@@ -1,10 +1,18 @@
 #!/bin/bash
 
 set -e
+echo "INFO | tuoni setup script started ..."
 
-SUDO_COMMAND=
-if command -v "sudo" &>/dev/null; then
-  SUDO_COMMAND="sudo -E"
+
+# SUDO_COMMAND default value
+if [[ -z "${SUDO_COMMAND+x}" ]]; then
+  SUDO_COMMAND=""
+  if command -v "sudo" &>/dev/null; then
+    SUDO_COMMAND="sudo -E"
+    echo "INFO | tuoni setup script default SUDO_COMMAND to: $SUDO_COMMAND ..."
+  fi
+else 
+  echo "INFO | tuoni setup script set SUDO_COMMAND to: $SUDO_COMMAND ..."
 fi
 
 # Install git if not found

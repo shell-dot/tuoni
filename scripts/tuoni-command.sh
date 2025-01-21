@@ -29,19 +29,19 @@ handle_client_command() {
     case "$command" in
         start)
             echo "INFO | Starting client ..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
             ;;
         stop)
             echo "INFO | Stopping client ..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} stop
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} stop
             ;;
         restart)
             echo "INFO | Restarting client ..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
             ;;
         logs)
             echo "INFO | Showing client logs ..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
             ;;
         *)
             echo "WARNING | Invalid client command. Available commands: start, stop, restart, logs."
@@ -55,19 +55,19 @@ handle_server_command() {
     case "$command" in
         start)
             echo "INFO | Starting server..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=server ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=server ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
             ;;
         stop)
             echo "INFO | Stopping server..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=server ${TUONI_DOCKER_COMPOSE_COMMAND} stop
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=server ${TUONI_DOCKER_COMPOSE_COMMAND} stop
             ;;
         restart)
             echo "INFO | Restarting server..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=server ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=server ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
             ;;
         logs)
             echo "INFO | Showing server logs..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=server ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=server ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
             ;;
         *)
             echo "WARNING | Invalid server command. Available commands: start, stop, restart, logs."
@@ -81,21 +81,21 @@ handle_docs_command() {
     case "$command" in
         start)
             echo "INFO | Starting docs..."
-            echo "${SUDO_COMMAND} env COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach"
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
+            echo "${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach"
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
             echo "INFO | Tuoni docs url: https://localhost:${TUONI_DOCS_PORT}/"
             ;;
         stop)
             echo "INFO | Stopping docs..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} stop
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} stop
             ;;
         restart)
             echo "INFO | Restarting docs..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
             ;;
         logs)
             echo "INFO | Showing docs logs..."
-            ${SUDO_COMMAND} env COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
+            ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=docs ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
             ;;
         *)
             echo "WARNING | Invalid docs command. Available commands: start, stop, restart, logs."
@@ -183,7 +183,7 @@ if [ "$TUONI_COMMAND" == "change-credentials" ]; then
   escaped_username=$(printf '%q' "$input_username")
 
   # Check if the username exists in the database
-  user_exists=$(${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/data/tuoni-db.sqlite3:/tmp/tuoni-db.sqlite3" \
+  user_exists=$(${TUONI_SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/data/tuoni-db.sqlite3:/tmp/tuoni-db.sqlite3" \
     -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} sqlite3 /tmp/tuoni-db.sqlite3 \
     "SELECT COUNT(*) FROM users WHERE username='$escaped_username';")
 
@@ -200,13 +200,13 @@ if [ "$TUONI_COMMAND" == "change-credentials" ]; then
   fi
 
   # Generate bcrypt hash for the password
-  HASH=$( ${SUDO_COMMAND} docker run --rm -w /tmp --user "$UID:$UID" \
+  HASH=$( ${TUONI_SUDO_COMMAND} docker run --rm -w /tmp --user "$UID:$UID" \
     ${TUONI_UTILITY_IMAGE} htpasswd -nbB "${input_username}" "${input_password}" | cut -d ":" -f 2 )
 
   SQL_STATEMENT="UPDATE users SET password='{bcrypt}$HASH' WHERE username='$escaped_username';"
 
   # Run the SQLite command inside Docker
-  ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/data/tuoni-db.sqlite3:/tmp/tuoni-db.sqlite3" \
+  ${TUONI_SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/data/tuoni-db.sqlite3:/tmp/tuoni-db.sqlite3" \
     -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} sqlite3 /tmp/tuoni-db.sqlite3 "$SQL_STATEMENT"
 
   echo "INFO | Credentials for user '$escaped_username' have been updated ..."
@@ -215,7 +215,7 @@ fi
 
 if [ "$TUONI_COMMAND" == "clean-configuration" ]; then
   . "$PROJECT_ROOT/scripts/clean-configuration.sh"
-  ${SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
+  ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
 fi
 
 if [ "$TUONI_COMMAND" == "update" ]; then
@@ -227,13 +227,13 @@ if [ "$TUONI_COMMAND" == "update-silent" ]; then
 fi
 
 if [ "$TUONI_COMMAND" == "update-docker-images" ]; then
-  ${SUDO_COMMAND} env COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull
+  ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull
 fi
 
 if [ "$TUONI_COMMAND" == "export-docker-images" ] || [ "$TUONI_COMMAND" == "export-tuoni-package" ]; then
   echo "INFO | Exporting docker images to $PROJECT_ROOT/transfer/tuoni-docker-images.tar ..."
-  ${SUDO_COMMAND} rm -f $PROJECT_ROOT/transfer/tuoni-docker-images.tar
-  ${SUDO_COMMAND} docker save -o $PROJECT_ROOT/transfer/tuoni-docker-images.tar \
+  ${TUONI_SUDO_COMMAND} rm -f $PROJECT_ROOT/transfer/tuoni-docker-images.tar
+  ${TUONI_SUDO_COMMAND} docker save -o $PROJECT_ROOT/transfer/tuoni-docker-images.tar \
     ghcr.io/shell-dot/tuoni/server:${VERSION} \
     ghcr.io/shell-dot/tuoni/client:${VERSION} \
     ghcr.io/shell-dot/tuoni/utility:${VERSION} \
@@ -266,7 +266,7 @@ fi
 
 if [ "$TUONI_COMMAND" == "import-docker-images" ] || [ "$TUONI_COMMAND" == "import-tuoni-package" ]; then
   echo "INFO | Importing docker images from $PROJECT_ROOT/transfer/tuoni-docker-images.tar ..."
-  ${SUDO_COMMAND} docker load -i $PROJECT_ROOT/transfer/tuoni-docker-images.tar
+  ${TUONI_SUDO_COMMAND} docker load -i $PROJECT_ROOT/transfer/tuoni-docker-images.tar
 fi
 
 if [ "$TUONI_COMMAND" == "transfer-tuoni-package" ]; then
@@ -274,20 +274,20 @@ if [ "$TUONI_COMMAND" == "transfer-tuoni-package" ]; then
 fi
 
 if [ "$TUONI_COMMAND" == "logs" ]; then
-  ${SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
+  ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} logs --tail 100 -f
 fi
 
 if [ "$TUONI_COMMAND" == "start" ]; then
-  ${SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
+  ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
   echo "INFO | Tuoni url: https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/"
 fi
 
 if [ "$TUONI_COMMAND" == "stop" ]; then
-  ${SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} stop
+  ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} stop
 fi
 
 if [ "$TUONI_COMMAND" == "restart" ]; then
-  ${SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
+  ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
 fi
 
 if [ "$TUONI_COMMAND" == "client" ]; then

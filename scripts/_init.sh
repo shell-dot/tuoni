@@ -7,12 +7,12 @@ if [[ "$SILENT" == "1" ]]; then
   echo "INFO | Silent mode enabled, no confirmation prompts ..."
 fi
 
-# SUDO_COMMAND default value
-if [[ -z "${SUDO_COMMAND+x}" ]]; then
-  SUDO_COMMAND=""
+# TUONI_SUDO_COMMAND default value
+if [[ -z "${TUONI_SUDO_COMMAND+x}" ]]; then
+  TUONI_SUDO_COMMAND=""
   if command -v "sudo" &>/dev/null; then
-    SUDO_COMMAND="sudo -E"
-    echo "INFO | tuoni default SUDO_COMMAND to: $SUDO_COMMAND ..."
+    TUONI_SUDO_COMMAND="sudo -E"
+    echo "INFO | tuoni default TUONI_SUDO_COMMAND to: $TUONI_SUDO_COMMAND ..."
   fi
 fi
 

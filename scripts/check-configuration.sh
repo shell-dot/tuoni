@@ -80,13 +80,13 @@ done
 # Ensure correct ownership of logs/client folder
 if [ "$(stat -c "%u:%g" "$PROJECT_ROOT/logs/client")" != "1000:1000" ]; then
   echo "INFO | ownership of $PROJECT_ROOT/logs/client will be changed to 1000:1000 ..."
-  ${SUDO_COMMAND} chown -R 1000:1000 "$PROJECT_ROOT/logs/client"
+  ${TUONI_SUDO_COMMAND} chown -R 1000:1000 "$PROJECT_ROOT/logs/client"
 fi
 
 # Move old server log to new location, pre 0.3.2
 if [ -f "$PROJECT_ROOT/logs/tuoni-server.log" ]; then
   echo "INFO | logs/tuoni-server.log found, moving to logs/server folder ..."
-  ${SUDO_COMMAND} mv $PROJECT_ROOT/logs/tuoni-server.lo* $PROJECT_ROOT/logs/server/
+  ${TUONI_SUDO_COMMAND} mv $PROJECT_ROOT/logs/tuoni-server.lo* $PROJECT_ROOT/logs/server/
 fi
 
 # Ensure server keystore exists
@@ -94,10 +94,10 @@ if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
   echo "INFO | ssl/server/server-selfsigned.keystore file not found, creating ..."
   
   if [ -d "$PROJECT_ROOT/ssl/server/hsperfdata_root" ]; then
-    ${SUDO_COMMAND} rmdir "${PROJECT_ROOT}/ssl/server/hsperfdata_root"
+    ${TUONI_SUDO_COMMAND} rmdir "${PROJECT_ROOT}/ssl/server/hsperfdata_root"
   fi
 
-  ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
+  ${TUONI_SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
     keytool -genkey -alias selfsigned \
     -keyalg RSA \
     -keystore server-selfsigned.keystore \
@@ -105,7 +105,7 @@ if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
     -storetype JKS \
     -dname "CN=localhost, OU=Tuoni, O=ShellDot, L=Tallinn, C=Estonia" \
     -keypass selfsigned -storepass selfsigned
-  ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
+  ${TUONI_SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
     keytool -exportcert -alias selfsigned \
     -keystore server-selfsigned.keystore \
     -file /tmp/server-certificate.crt \
@@ -115,20 +115,20 @@ fi
 # Ensure server private key exists
 if [ ! -f "$PROJECT_ROOT/ssl/server/server-private.pem" ]; then
   echo "INFO | ssl/server/server-private.pem file not found, creating ..."
-  ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
+  ${TUONI_SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
     openssl genpkey -algorithm RSA -out server.pem -pkeyopt rsa_keygen_bits:2048
-  ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
+  ${TUONI_SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
     openssl rsa -pubout -in server.pem -out server-public.pem
-  ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
+  ${TUONI_SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/server:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
     openssl pkcs8 -topk8 -in server.pem -nocrypt -out server-private.pem
 fi
 
 # Ensure client private key exists
 if [ ! -f "$PROJECT_ROOT/ssl/client/client-private.pem" ]; then
   echo "INFO | ssl/client/client-private.pem file not found, creating ..."
-  ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/client:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
+  ${TUONI_SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/client:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
     openssl genpkey -algorithm RSA -out client-private.pem -pkeyopt rsa_keygen_bits:2048
-  ${SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/client:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
+  ${TUONI_SUDO_COMMAND} docker run --rm -v "${PROJECT_ROOT}/ssl/client:/tmp" -w /tmp --user "$UID:$UID" ${TUONI_UTILITY_IMAGE} \
     openssl req -new -key client-private.pem -x509 -days 365 -out client.crt -subj "/C=EE/ST=YourState/L=YourCity/O=YourOrganization/CN=yourdomain.com"
 fi
 
@@ -160,5 +160,5 @@ awk -i inplace -v port="$TUONI_CLIENT_PORT" '
 ' $PROJECT_ROOT/nginx/tuoni.conf
 
 # Ensure correct permissions for ssl directory
-${SUDO_COMMAND} chown $USER:$USER -R "${PROJECT_ROOT}/ssl"
-${SUDO_COMMAND} chmod +r "${PROJECT_ROOT}/ssl"/*
+${TUONI_SUDO_COMMAND} chown $USER:$USER -R "${PROJECT_ROOT}/ssl"
+${TUONI_SUDO_COMMAND} chmod +r "${PROJECT_ROOT}/ssl"/*

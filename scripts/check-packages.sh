@@ -20,5 +20,5 @@ if ! command_exists "gawk"; then REQUIRED_PACKAGES+=('gawk'); fi
 # Install other missing packages
 if [ "${#REQUIRED_PACKAGES[@]}" -ne 0 ]; then
     echo "INFO | Following packages are not found, installing: ${REQUIRED_PACKAGES[*]} ..."
-    ${SUDO_COMMAND} apt-get update && ${SUDO_COMMAND} apt-get install -y ${REQUIRED_PACKAGES[*]}
+    ${TUONI_SUDO_COMMAND} apt-get update && ${TUONI_SUDO_COMMAND} apt-get install -y ${REQUIRED_PACKAGES[*]}
 fi

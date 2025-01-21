@@ -78,7 +78,7 @@ echo "INFO | TUONI_VERSION ${TUONI_VERSION:-$TUONI_GIT_VERSION}"
 sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION:-$TUONI_GIT_VERSION}/g" "$PROJECT_ROOT/config/tuoni.env"
 
 echo "INFO | Pulling Tuoni ${TUONI_VERSION:-$TUONI_GIT_VERSION} docker images..."
-${SUDO_COMMAND} env COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull
+${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull
 
 echo -e "\n\n\n\n\n"
 echo "================================================================"

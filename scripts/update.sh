@@ -36,8 +36,44 @@ echo "INFO | Running Tuoni update script ..."
 # Update scripts and repo
 cd $PROJECT_ROOT && git pull
 
-# Update the image version in env file
-TUONI_GIT_VERSION=$(cat $PROJECT_ROOT/version.yml | cut -d ' ' -f 2)
+
+# Function to compare versions
+# Returns 0 if the first version is greater than or equal to the second version
+version_gte() {
+    # Use sort with version sort flag and check the first line
+    [ "$1" = "$(echo -e "$1\n$2" | sort -V | head -n1)" ]
+}
+
+TUONI_CONFIG_VERSION=$(cat ${PROJECT_ROOT}/config/tuoni.env | grep VERSION | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' )
+TUONI_GIT_VERSION=$(cat ${PROJECT_ROOT}/version.yml | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' )
+
+# TUONI_VERSION from env
+if [[ ! -z "${TUONI_VERSION+x}" ]]; then
+    TUONI_CONFIG_VERSION=${TUONI_VERSION}
+fi
+
+version_check=0
+if version_gte "${TUONI_CONFIG_VERSION}" "${TUONI_GIT_VERSION}"; then
+        echo "INFO | Tuoni git version ${TUONI_GIT_VERSION}, tuoni config/env version ${TUONI_CONFIG_VERSION}"
+else 
+        echo "WARNING | Tuoni git version ${TUONI_GIT_VERSION} is lower than the version set in the config/env: ${TUONI_CONFIG_VERSION}"
+        version_check=1
+fi
+
+# prompt a warning if installed version is higher than the git version
+if [ "${version_check}" -eq 1 ]; then
+# Skip prompt if SILENT is set to 1  
+    if [[ "$SILENT" != "1" ]]; then
+        read -r -p "WARNING | Do you want to proceed with the installation? (y/N): " -n 1 -r </dev/tty
+        echo    # (optional) move to a new line
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo -e "\n\n\n\n\n"
+            echo "INFO | Update aborted by the user ..."
+            exit 1
+        fi
+    fi
+fi
+
 echo "INFO | TUONI_VERSION ${TUONI_VERSION:-$TUONI_GIT_VERSION}"
 sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION:-$TUONI_GIT_VERSION}/g" "$PROJECT_ROOT/config/tuoni.env"
 

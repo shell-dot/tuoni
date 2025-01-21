@@ -3,6 +3,12 @@
 set -e
 echo "INFO | tuoni setup script started ..."
 
+# TUONI_BRANCH default value
+if [[ -z "${TUONI_BRANCH+x}" ]]; then
+  TUONI_BRANCH="main"
+else 
+  echo "INFO | tuoni setup set TUONI_BRANCH to: $TUONI_BRANCH ..."
+fi
 
 # SUDO_COMMAND default value
 if [[ -z "${SUDO_COMMAND+x}" ]]; then
@@ -27,7 +33,7 @@ if [ ! -d "/srv/tuoni" ]; then
   cd /srv 
   ${SUDO_COMMAND} mkdir /srv/tuoni 
   ${SUDO_COMMAND} chown $USER:$USER /srv/tuoni
-  git clone https://github.com/shell-dot/tuoni.git /srv/tuoni
+  git clone -b $TUONI_BRANCH https://github.com/shell-dot/tuoni.git /srv/tuoni
   cd /srv/tuoni
   ./tuoni start
 elif [[ "$NO_UPDATE" == "1" ]]; then

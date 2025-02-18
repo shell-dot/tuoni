@@ -1,6 +1,13 @@
+name: Release to Discord
+
+# Only run when a release is published
 on:
   release:
     types: [published]
+
+# Explicitly define minimal permissions
+permissions:
+  contents: read
 
 jobs:
   github-releases-to-discord:

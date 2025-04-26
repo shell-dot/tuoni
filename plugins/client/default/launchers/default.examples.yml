@@ -71,3 +71,25 @@ launchers:
       - name: isHTTPS
         jsFn: |
           listener.configuration.https ? "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true};" : "";
+  # Same as powershell, but in python
+  - name: "Download and Execute in Python"
+    match:
+      type: ["SHELLCODE"]
+      arch: ["x64", "x86"] # python interpreter needs to be x64 or x86
+      platform: ["windows"]
+    type: file
+    path: "template.shellcode_python_template.py"
+    args:
+      - name: url
+      - name: isHTTPS
+  # We use APC to inject shellcode to local process
+  - name: "Download and Execute in Python via APC"
+    match:
+      type: ["SHELLCODE"]
+      arch: ["x64", "x86"] # python interpreter needs to be x64 or x86
+      platform: ["windows"]
+    type: file
+    path: "template.APC_python_shellcode_template.py"
+    args:
+      - name: url
+      - name: isHTTPS

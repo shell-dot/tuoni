@@ -93,6 +93,7 @@ launchers:
     args:
       - name: url
       - name: isHTTPS
+  # Service launcher for cmd
   - name: "Download, create and start service [CMD]"
     match:
       type: ["SERVICE"]
@@ -114,3 +115,14 @@ launchers:
       - name: svc_name
         jsFn: |
           `${argumentsPluginInterface['randomBinName']}`;
+  # inject shellcode to remote process in python via APC
+  - name: "Download and Execute in Python via APC to remote proc"
+    match:
+      type: ["SHELLCODE"]
+      arch: ["x64"]
+      platform: ["windows"]
+    type: file
+    path: "template.remote_APC_inj.py"
+    args:
+      - name: url
+      - name: isHTTPS

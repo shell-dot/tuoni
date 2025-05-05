@@ -25,6 +25,17 @@ tuoni:
       configuration:
         custom-payload-template-dir: file:./custom-payload-templates/
 
+  # EXPERIMENTAL
+  scripting:
+    permissions:
+      # Options are
+      # - "sandbox" - read access to Tuoni scripts, files and GraalPy. Read-write access to /tuoni_vfs/tmp directory.
+      # - "read-only" - read access to Tuoni scripts, files, and the real file system. Read-write access to /tuoni_vfs/tmp directory.
+      # - "read-write" - read-write access to Tuoni scripts, the real file system, and to /tuoni_vfs/tmp directory. Read-only for Tuoni files.
+      fs-access: "sandbox"
+      allow-net-access: false
+      allow-env-access: false
+
 logging:
   file:
     name: ./logs/tuoni-server.log
@@ -43,10 +54,10 @@ logging:
 
 client:
   port: 12702
-  logger: 
+  logger:
     to_file: false
     to_console: false
     level: info
     sh: false
-    headers: 
+    headers:
       - user-agent

@@ -15,6 +15,7 @@ tuoni_commands_array=(
     "update" \
     "update-silent" \
     "update-docker-images" \
+    "update-plugins" \
     "export-docker-images" \
     "import-docker-images" \
     "transfer-tuoni-package" \

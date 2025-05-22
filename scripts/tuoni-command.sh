@@ -127,12 +127,13 @@ $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     $(tput setaf 3)update$(tput sgr0)                 Perform git and docker pull.
     $(tput setaf 3)update-silent$(tput sgr0)          Perform git and docker pull silently.
     $(tput setaf 3)update-docker-images$(tput sgr0)   Perform docker pull.
+    $(tput setaf 3)update-plugins$(tput sgr0)         Update licenced plugins.
     $(tput setaf 3)export-docker-images$(tput sgr0)   Export docker images to transfer folder.
     $(tput setaf 3)import-docker-images$(tput sgr0)   Import docker images from transfer folder.
     $(tput setaf 3)transfer-tuoni-package$(tput sgr0) Rsync transfer folder to remote defined in config/tuoni.env.
     $(tput setaf 3)export-tuoni-package$(tput sgr0)   Export current git repository and docker images to transfer folder.
     $(tput setaf 3)import-tuoni-package$(tput sgr0)   Import git repository and docker images from transfer folder.
-    
+
 $(tput smul)ADDITIONAL INFORMATION:$(tput rmul)
     Tuoni URL:           $(tput setaf 4)https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/$(tput sgr0)
     Tuoni URL Localhost: $(tput setaf 4)https://localhost:${TUONI_CLIENT_PORT}/$(tput sgr0)
@@ -228,6 +229,10 @@ fi
 
 if [ "$TUONI_COMMAND" == "update-docker-images" ]; then
   ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=app,utility ${TUONI_DOCKER_COMPOSE_COMMAND} pull
+fi
+
+if [ "$TUONI_COMMAND" == "update-plugins" ]; then
+  . "$PROJECT_ROOT/scripts/update-plugins.sh"
 fi
 
 if [ "$TUONI_COMMAND" == "export-docker-images" ] || [ "$TUONI_COMMAND" == "export-tuoni-package" ]; then

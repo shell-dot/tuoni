@@ -70,7 +70,7 @@ if [[ ! $($PROJECT_ROOT/scripts/tools/yq '.client.port' $TUONI_CONFIG_FILE_PATH)
 fi
 
 # Ensure necessary directories exist
-for dir in data logs/server logs/client logs/nginx payload-templates plugins transfer; do
+for dir in data logs/server logs/client logs/nginx payload-templates plugins transfer python-site-packages; do
   if [ ! -d "$PROJECT_ROOT/$dir" ]; then
     echo "INFO | $dir directory not found, creating ..."
     mkdir -p "$PROJECT_ROOT/$dir"

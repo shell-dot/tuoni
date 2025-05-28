@@ -124,4 +124,18 @@ unzip -oq "${TUONI_PLUGINS_TEMP_FILE}" -d "${PROJECT_ROOT}"
 # Remove temp file after unzipping
 ${TUONI_SUDO_COMMAND} rm -f "${TUONI_PLUGINS_TEMP_FILE}"
 
+if [[ -z "${SILENT}" ]]; then
+    read -rp "Tuoni server needs to be restarted do you want to do it now? (y/n): " TUONI_RESTART
+    if [[ "${TUONI_RESTART}" == "y" ]]; then
+        cd /srv/tuoni || exit 1
+        ./tuoni restart
+    else
+        echo "Tuoni server will not be restarted. Please restart it manually to load the plugins."
+    fi
+else
+    echo "Restarting Tuoni server..."
+    cd /srv/tuoni || exit 1
+    ./tuoni restart
+fi
+
 echo "Updated Tuoni plugins in ${PROJECT_ROOT}/plugins folder"

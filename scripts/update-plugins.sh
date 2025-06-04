@@ -119,23 +119,31 @@ if [[ -z "${SILENT}" ]]; then
 fi
 
 # Unzipping the downloaded file to the plugins directory, overwriting any existing files
+# Also comparing hashes before and after the update to check if Tuoni restart is needed
+PRE_UPDATE_HASH=$(find "${PROJECT_ROOT}/plugins" -type f -exec sha256sum {} + | sha256sum | cut -d ' ' -f1)
 unzip -oq "${TUONI_PLUGINS_TEMP_FILE}" -d "${PROJECT_ROOT}"
+POST_UPDATE_HASH=$(find "${PROJECT_ROOT}/plugins" -type f -exec sha256sum {} + | sha256sum | cut -d ' ' -f1)
 
 # Remove temp file after unzipping
 ${TUONI_SUDO_COMMAND} rm -f "${TUONI_PLUGINS_TEMP_FILE}"
 
-if [[ -z "${SILENT}" ]]; then
-    read -rp "Tuoni server needs to be restarted do you want to do it now? (y/n): " TUONI_RESTART
-    if [[ "${TUONI_RESTART}" == "y" ]]; then
+# Check if the hash has changed, if so then Tuoni server needs to be restarted
+if [[ "${PRE_UPDATE_HASH}" != "${POST_UPDATE_HASH}" ]]; then
+
+    if [[ -z "${SILENT}" ]]; then
+        read -rp "Tuoni server needs to be restarted do you want to do it now? (y/n): " TUONI_RESTART
+        if [[ "${TUONI_RESTART}" == "y" ]]; then
+            cd /srv/tuoni || exit 1
+            ./tuoni restart
+        else
+            echo "Tuoni server will not be restarted. Please restart it manually to load the plugins."
+        fi
+    else
+        echo "Restarting Tuoni server..."
         cd /srv/tuoni || exit 1
         ./tuoni restart
-    else
-        echo "Tuoni server will not be restarted. Please restart it manually to load the plugins."
     fi
-else
-    echo "Restarting Tuoni server..."
-    cd /srv/tuoni || exit 1
-    ./tuoni restart
+
 fi
 
 echo "Updated Tuoni plugins in ${PROJECT_ROOT}/plugins folder"

@@ -126,3 +126,28 @@ launchers:
     args:
       - name: url
       - name: isHTTPS
+  # Reflective launchers for DLLs for files dll execution in powershell process
+  - name: "Reflective dll x64 powershell"
+    match:
+      type: ["DLL"]
+      arch: ["x64"]
+      platform: ["windows"]
+    type: file
+    path: "x64_reflect_dll_template.ps1"
+    args:
+      - name: url
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true};" : "";
+  - name: "Reflective dll x86 powershell"
+    match:
+      type: ["DLL"]
+      arch: ["x86"]
+      platform: ["windows"]
+    type: file
+    path: "x86_reflect_dll_template.ps1"
+    args:
+      - name: url
+      - name: isHTTPS
+        jsFn: |
+          listener.configuration.https ? "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true};" : "";

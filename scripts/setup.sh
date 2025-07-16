@@ -13,7 +13,7 @@ fi
 # TUONI_BRANCH default value
 if [[ -z "${TUONI_BRANCH+x}" ]]; then
   TUONI_BRANCH="main"
-else 
+else
   echo "INFO | tuoni setup set TUONI_BRANCH to: $TUONI_BRANCH ..."
 fi
 
@@ -24,7 +24,7 @@ if [[ -z "${TUONI_SUDO_COMMAND+x}" ]]; then
     TUONI_SUDO_COMMAND="sudo -E"
     echo "INFO | tuoni setup script default TUONI_SUDO_COMMAND to: $TUONI_SUDO_COMMAND ..."
   fi
-else 
+else
   echo "INFO | tuoni setup script set TUONI_SUDO_COMMAND to: $TUONI_SUDO_COMMAND ..."
 fi
 
@@ -37,16 +37,19 @@ fi
 # Check if the tuoni directory exists
 if [ ! -d "/srv/tuoni" ]; then
   echo "INFO | Cloning tuoni repository into /srv/tuoni ..."
-  cd /srv 
-  ${TUONI_SUDO_COMMAND} mkdir /srv/tuoni 
+  cd /srv
+  ${TUONI_SUDO_COMMAND} mkdir /srv/tuoni
   ${TUONI_SUDO_COMMAND} chown $USER:$USER /srv/tuoni
   git clone -b $TUONI_BRANCH $TUONI_REPO /srv/tuoni
   cd /srv/tuoni
   ./tuoni start
 elif [[ "$NO_UPDATE" == "1" ]]; then
   echo "INFO | tuoni directory already exists and NO_UPDATE=1 is set. Skipping update ..."
+  cd /srv/tuoni
+  ./tuoni start
 else
   echo "INFO | tuoni directory already exists. Updating ..."
   cd /srv/tuoni
   ./tuoni update-silent
+  ./tuoni start
 fi

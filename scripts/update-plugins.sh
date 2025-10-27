@@ -20,7 +20,7 @@ if [[ -z "${TUONI_LICENCE_KEY}" ]]; then
 fi
 
 # Verifying the Tuoni licence key is correct
-CURRENT_DATE=$(date +%s) # Getting the date in an unix timestamp format
+CURRENT_DATE=$(date +%s) # Getting the date in a unix timestamp format
 LICENCE_TOKEN=$(echo -n "${TUONI_LICENCE_KEY}:${CURRENT_DATE}" | sha256sum | cut -d ' ' -f1)
 LICENCE_KEY_VALID=$(curl --request POST "${TUONI_PLUGINS_URI}" \
     --silent \
@@ -38,7 +38,7 @@ fi
 
 if [[ -z "${SILENT}" ]]; then
 
-    CURRENT_DATE=$(date +%s) # Getting the date in an unix timestamp format
+    CURRENT_DATE=$(date +%s) # Getting the date in a unix timestamp format
     LICENCE_TOKEN=$(echo -n "${TUONI_LICENCE_KEY}:${CURRENT_DATE}" | sha256sum | cut -d ' ' -f1)
     AVAILABLE_VERSIONS=$(curl --request POST "${TUONI_PLUGINS_URI}" \
         --silent \
@@ -96,7 +96,7 @@ ${TUONI_SUDO_COMMAND} rm -f "${TUONI_PLUGINS_TEMP_FILE}"
 
 # Downloading the plugins zip file
 echo "Downloading Tuoni plugins version ${TUONI_VERSION}..."
-CURRENT_DATE=$(date +%s) # Getting the date in an unix timestamp format
+CURRENT_DATE=$(date +%s) # Getting the date in a unix timestamp format
 LICENCE_TOKEN=$(echo -n "${TUONI_LICENCE_KEY}:${CURRENT_DATE}" | sha256sum | cut -d ' ' -f1)
 curl "${TUONI_PLUGINS_URI}" \
     --silent \
@@ -111,7 +111,7 @@ curl "${TUONI_PLUGINS_URI}" \
 
 # if SILENT is not defined in the environment variable, then ask the user if they want to overwrite the existing files
 if [[ -z "${SILENT}" ]]; then
-    read -rp "The update will overwrite the existing plugins in ${PROJECT_ROOT}/plugins do you want to contionue? (y/n): " OVERWRITE_FILES
+    read -rp "The update will overwrite the existing plugins in ${PROJECT_ROOT}/plugins do you want to continue? (y/n): " OVERWRITE_FILES
     if [[ "${OVERWRITE_FILES}" != "y" ]]; then
         echo Update cancelled
         exit 0

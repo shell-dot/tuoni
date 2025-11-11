@@ -159,3 +159,39 @@ launchers:
         jsFn: |
           const payloadType = payload.configuration.type;
           `${argumentsPluginInterface['randomBinName']}`;
+# LoadLibraryA DLL injection in python
+  - name: "LoadLibraryA python"
+    match:
+      type: ["DLL"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: file
+    path: "LoadLib_dll_launcher.py"
+    args:
+      - name: url
+      - name: isHTTPS
+      - name: randomBinName
+        jsFile: lib/arg.randomBinName.js
+      - name: filename
+        jsFn: |
+          const payloadType = payload.configuration.type;
+          const fileExtension = payloadsStore().extensionMap.get(payloadType);
+          `${argumentsPluginInterface['randomBinName']}`;
+# Python script as windows service launcher (runs shellcode payload via self APC injection). Elevated persistance
+  - name: "Python service shellcode APC"
+    match:
+      type: ["SHELLCODE"]
+      arch: ["x64", "x86"]
+      platform: ["windows"]
+    type: file
+    path: "python_service_shellcode_template.py"
+    args:
+      - name: url
+      - name: isHTTPS
+      - name: randomBinName
+        jsFile: lib/arg.randomBinName.js
+      - name: filename
+        jsFn: |
+          const payloadType = payload.configuration.type;
+          const fileExtension = payloadsStore().extensionMap.get(payloadType);
+          `${argumentsPluginInterface['randomBinName']}`;

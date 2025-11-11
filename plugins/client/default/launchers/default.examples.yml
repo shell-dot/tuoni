@@ -178,7 +178,7 @@ launchers:
           const fileExtension = payloadsStore().extensionMap.get(payloadType);
           `${argumentsPluginInterface['randomBinName']}`;
 # Python script as windows service launcher (runs shellcode payload via self APC injection). Elevated persistance
-  - name: "Python service shellcode APC"
+  - name: "Python service shellcode APC (elevated persistance)"
     match:
       type: ["SHELLCODE"]
       arch: ["x64", "x86"]

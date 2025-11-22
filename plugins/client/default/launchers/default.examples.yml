@@ -166,7 +166,7 @@ launchers:
       arch: ["x64", "x86"]
       platform: ["windows"]
     type: file
-    path: "LoadLib_dll_launcher.py"
+    path: "LoadLibA_dll_launcher_template.py"
     args:
       - name: url
       - name: isHTTPS

@@ -14,7 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/release-to-discord
       - name: Release notes to Discord
         run: cd .github/release-to-discord && npm install && node release-to-discord.js
         env:

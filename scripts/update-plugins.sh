@@ -30,9 +30,10 @@ LICENCE_KEY_VALID=$(curl --request POST "${TUONI_PLUGINS_URI}" \
         "version": "'"${TUONI_VERSION}"'"
     }')
 
-# Check if the response contains "Invalid token"
-if echo "$LICENCE_KEY_VALID" | grep -q "Invalid token"; then
-    echo "Error: Invalid license token. Please check your Tuoni license key."
+# Check if the response contains a valid token
+if ! echo "$LICENCE_KEY_VALID" | jq -e '.valid == true' > /dev/null; then
+    echo "Error: Invalid licence token. Please check your Tuoni licence key."
+    echo "$LICENCE_KEY_VALID" | jq .
     exit 1
 fi
 

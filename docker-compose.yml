@@ -31,6 +31,7 @@ services:
     image: ghcr.io/shell-dot/tuoni/server:${VERSION}
     volumes:
       - ./data/:/app/data/
+      - ./python-site-packages:/app/venv/external-packages/:rw
       - ./logs/server/:/app/logs/
       - ./payload-templates/:/app/custom-payload-templates/:ro
       - ./config/tuoni.yml:/app/tuoni-production.yml:ro

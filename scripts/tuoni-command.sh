@@ -14,10 +14,12 @@ export TUONI_CLIENT_LOGGER_LEVEL=$($PROJECT_ROOT/scripts/tools/yq '.client.logge
 export TUONI_CLIENT_LOGGER_HEADERS=$($PROJECT_ROOT/scripts/tools/yq -o=json '.client.logger.headers' $TUONI_CONFIG_FILE_PATH | jq -c)
 
 export TUONI_DOCKER_COMPOSE_COMMAND="docker compose --env-file ${PROJECT_ROOT}/config/tuoni.env -f ${PROJECT_ROOT}/docker-compose.yml"
+export TUONI_DOCKER_PIP_COMMAND="docker run --env-file ${PROJECT_ROOT}/config/tuoni.env --rm -v ${PROJECT_ROOT}/python-site-packages:/app/venv/external-packages --user $UID:$UID --entrypoint /app/venv/bin/pip ghcr.io/shell-dot/tuoni/server:${VERSION} --no-cache-dir ${TUONI_SUBCOMMAND_WITH_ARGS}"
 
 TUONI_COMPONENT=$(basename "$0")
 TUONI_COMMAND="$1"
 TUONI_SUBCOMMAND="$2"
+TUONI_SUBCOMMAND_WITH_ARGS="${*:2}"
 
 if [ "$TUONI_COMPONENT" == "tuoni" ]; then
   TUONI_COMPONENT="app"
@@ -133,6 +135,7 @@ $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     $(tput setaf 3)transfer-tuoni-package$(tput sgr0) Rsync transfer folder to remote defined in config/tuoni.env.
     $(tput setaf 3)export-tuoni-package$(tput sgr0)   Export current git repository and docker images to transfer folder.
     $(tput setaf 3)import-tuoni-package$(tput sgr0)   Import git repository and docker images from transfer folder.
+    $(tput setaf 3)pip$(tput sgr0)                    Manage Python packages for Tuoni Server-Side Scripting.
 
 $(tput smul)ADDITIONAL INFORMATION:$(tput rmul)
     Tuoni URL:           $(tput setaf 4)https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/$(tput sgr0)
@@ -309,6 +312,11 @@ fi
 if [ "$TUONI_COMMAND" == "docs" ]; then
   handle_docs_command "$TUONI_SUBCOMMAND"
 fi
+
+if [ "$TUONI_COMMAND" == "pip" ]; then
+  ${TUONI_SUDO_COMMAND} ${TUONI_DOCKER_PIP_COMMAND} ${TUONI_SUBCOMMAND_WITH_ARGS}
+fi
+
 
 # Display Tuoni URL, username, and password during setup
 if [ -n "${TUONI_USERNAME_TO_CONFIG}" ]; then

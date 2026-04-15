@@ -29,8 +29,15 @@ fi
 
 echo "INFO | Running Tuoni update script ..."
 
+echo "INFO | Running Tuoni update script ..."
 # Update scripts and repo
-cd "$PROJECT_ROOT" && git pull
+cd "$PROJECT_ROOT"
+# TUONI_BRANCH default value if not set in env
+if [[ ! -z "${TUONI_BRANCH+x}" ]]; then
+  echo "INFO | Switching to branch ${TUONI_BRANCH} ..."
+  git switch "${TUONI_BRANCH}"
+fi
+git pull --rebase
 
 # Function to compare versions
 # Returns 0 if the first version is greater than or equal to the second version

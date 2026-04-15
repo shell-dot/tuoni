@@ -39,8 +39,8 @@ version_gte() {
     [ "$1" = "$(echo -e "$1\n$2" | sort -V | head -n1)" ]
 }
 
-TUONI_CONFIG_VERSION=$(grep VERSION "${PROJECT_ROOT}/config/tuoni.env" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' )
-TUONI_GIT_VERSION=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+' "${PROJECT_ROOT}/version.yml")
+TUONI_CONFIG_VERSION=$(grep '^VERSION=' "${PROJECT_ROOT}/config/tuoni.env" | cut -d'=' -f2 | tr -d '[:space:]')
+TUONI_GIT_VERSION=$(grep '^version:' "${PROJECT_ROOT}/version.yml" | cut -d':' -f2 | tr -d '[:space:]')
 
 # TUONI_VERSION from env
 if [[ -n "${TUONI_VERSION+x}" ]]; then

@@ -30,7 +30,15 @@ fi
 echo "INFO | Running Tuoni update script ..."
 
 # Update scripts and repo
+UPDATE_SH_HASH_BEFORE=$(sha1sum "$PROJECT_ROOT/scripts/update.sh" | cut -d' ' -f1)
 cd "$PROJECT_ROOT" && git pull
+UPDATE_SH_HASH_AFTER=$(sha1sum "$PROJECT_ROOT/scripts/update.sh" | cut -d' ' -f1)
+
+if [[ "$UPDATE_SH_HASH_BEFORE" != "$UPDATE_SH_HASH_AFTER" ]]; then
+    echo "WARNING | The update script itself was changed by git pull."
+    echo "WARNING | Please re-run 'tuoni update' to use the updated logic."
+    exit 0
+fi
 
 # Function to compare versions
 # Returns 0 if the first version is greater than or equal to the second version

@@ -28,7 +28,7 @@ services:
     profiles: ["app", "server"]
     container_name: tuoni-server
     hostname: tuoni-server
-    image: ghcr.io/shell-dot/tuoni/server:${VERSION}
+    image: ${TUONI_CONTAINER_REPO:-ghcr.io}/shell-dot/tuoni/server:${VERSION}
     volumes:
       - ./data/:/app/data/
       - ./logs/server/:/app/logs/
@@ -45,7 +45,7 @@ services:
     profiles: ["app", "client"]
     container_name: tuoni-client
     hostname: tuoni-client
-    image: ghcr.io/shell-dot/tuoni/client:${VERSION}
+    image: ${TUONI_CONTAINER_REPO:-ghcr.io}/shell-dot/tuoni/client:${VERSION}
     user: 1000:100
     environment:
       - TUONI_CLIENT_PORT
@@ -58,7 +58,7 @@ services:
       - ./plugins/client:/srv/user-defined-plugins/:ro
     networks:
       - tuoni-network
-      
+
   tuoni-client-nginx:
     <<: *defaults
     profiles: ["app", "client", "client-nginx"]
@@ -82,15 +82,15 @@ services:
     profiles: ["app", "docs"]
     container_name: tuoni-docs
     hostname: tuoni-docs
-    image: ghcr.io/shell-dot/tuoni/docs:${VERSION}
+    image: ${TUONI_CONTAINER_REPO:-ghcr.io}/shell-dot/tuoni/docs:${VERSION}
     networks:
-      - tuoni-network   
+      - tuoni-network
 
   tuoni-utility:
     <<: *defaults
     profiles: ["utility"]
     container_name: tuoni-utility
     hostname: tuoni-utility
-    image: ghcr.io/shell-dot/tuoni/utility:${VERSION}
+    image: ${TUONI_CONTAINER_REPO:-ghcr.io}/shell-dot/tuoni/utility:${VERSION}
     networks:
-      - tuoni-network    
+      - tuoni-network

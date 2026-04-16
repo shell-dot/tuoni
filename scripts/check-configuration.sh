@@ -18,17 +18,27 @@ if [[ ! -z "${TUONI_VERSION+x}" ]]; then
   sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION}/g" ${TUONI_ENV_FILE_PATH}
 fi
 
-# Check if TUONI_DOCKER_IPV6_ENABLED variable is set
-if [ "$TUONI_DOCKER_IPV6_ENABLED" ]; then
-  # Remove existing TUONI_DOCKER_IPV6_ENABLED entry
-  sed -i '/^TUONI_DOCKER_IPV6_ENABLED=/d' $TUONI_ENV_FILE_PATH
-
-  # Ensure the file ends with a newline before appending, only if the file is non-empty
-  if [ -s "$TUONI_ENV_FILE_PATH" ] && [ "$(tail -c 1 "$TUONI_ENV_FILE_PATH")" != "" ]; then
-    echo "" >> "$TUONI_ENV_FILE_PATH"
+# Check if TUONI_CONTAINER_REPO variable is set, update tuoni.env file if it is
+if [[ "${TUONI_CONTAINER_REPO}" ]]; then
+  echo "INFO | TUONI_CONTAINER_REPO variable is set, updating tuoni.env file ..."
+  # Checking if TUONI_CONTAINER_REPO already exists in the file
+  if grep -q "^TUONI_CONTAINER_REPO=" "$TUONI_ENV_FILE_PATH"; then
+    # Update existing entry
+    sed -i "s|^TUONI_CONTAINER_REPO=.*|TUONI_CONTAINER_REPO=${TUONI_CONTAINER_REPO}|g" "$TUONI_ENV_FILE_PATH"
+  else
+    echo -e "\nTUONI_CONTAINER_REPO=${TUONI_CONTAINER_REPO}" >> "$TUONI_ENV_FILE_PATH"
   fi
-  
-  echo "TUONI_DOCKER_IPV6_ENABLED=$TUONI_DOCKER_IPV6_ENABLED" >> $TUONI_ENV_FILE_PATH
+fi
+
+# Check if TUONI_DOCKER_IPV6_ENABLED variable is set
+if [ "${TUONI_DOCKER_IPV6_ENABLED}" ]; then
+  # Remove existing TUONI_DOCKER_IPV6_ENABLED entry
+  if grep -q "^TUONI_DOCKER_IPV6_ENABLED=" "$TUONI_ENV_FILE_PATH"; then
+    # Update existing entry
+    sed -i "s/^TUONI_DOCKER_IPV6_ENABLED=.*/TUONI_DOCKER_IPV6_ENABLED=$TUONI_DOCKER_IPV6_ENABLED/g" "$TUONI_ENV_FILE_PATH"
+  else
+    echo -e "\nTUONI_DOCKER_IPV6_ENABLED=$TUONI_DOCKER_IPV6_ENABLED" >> "$TUONI_ENV_FILE_PATH"
+  fi
 fi
 
 # Check if tuoni.yml file exists, create if not
@@ -66,7 +76,7 @@ fi
 # Check if 'client' attribute exists, pre 0.3.2
 if [[ ! $($PROJECT_ROOT/scripts/tools/yq '.client.port' $TUONI_CONFIG_FILE_PATH) =~ ^[0-9]+$ ]]; then
   echo "INFO | 'client' attribute is missing or invalid in config, adding ..."
-  $PROJECT_ROOT/scripts/tools/yq '.client = load("'$TUONI_CONFIG_EXAMPLE_FILE_PATH'").client' --inplace $TUONI_CONFIG_FILE_PATH 
+  $PROJECT_ROOT/scripts/tools/yq '.client = load("'$TUONI_CONFIG_EXAMPLE_FILE_PATH'").client' --inplace $TUONI_CONFIG_FILE_PATH
 fi
 
 # Ensure necessary directories exist
@@ -92,7 +102,7 @@ fi
 # Ensure server keystore exists
 if [ ! -f "$PROJECT_ROOT/ssl/server/server-selfsigned.keystore" ]; then
   echo "INFO | ssl/server/server-selfsigned.keystore file not found, creating ..."
-  
+
   if [ -d "$PROJECT_ROOT/ssl/server/hsperfdata_root" ]; then
     ${TUONI_SUDO_COMMAND} rmdir "${PROJECT_ROOT}/ssl/server/hsperfdata_root"
   fi

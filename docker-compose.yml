@@ -29,6 +29,7 @@ services:
     container_name: tuoni-server
     hostname: tuoni-server
     image: ${TUONI_CONTAINER_REPO:-ghcr.io}/shell-dot/tuoni/server:${VERSION}
+    entrypoint: ["/usr/bin/java", "-Xmx4G", "--enable-native-access=ALL-UNNAMED", "-cp", "/app/cp", "org.springframework.boot.loader.launch.JarLauncher"]
     volumes:
       - ./data/:/app/data/
       - ./logs/server/:/app/logs/

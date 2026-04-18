@@ -35,6 +35,7 @@ cd "$PROJECT_ROOT"
 # TUONI_BRANCH default value if not set in env
 if [[ ! -z "${TUONI_BRANCH+x}" ]]; then
   echo "INFO | Switching to branch ${TUONI_BRANCH} ..."
+  git fetch --all
   git switch "${TUONI_BRANCH}"
 fi
 git pull --rebase

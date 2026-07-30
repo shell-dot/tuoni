@@ -22,11 +22,11 @@ launchers:
           const payloadType = payload.configuration.type;
           const fileExtension = payloadsStore().extensionMap.get(payloadType);
           `${argumentsPluginInterface['randomBinName']}.${fileExtension}`; // Using previously parsed argument via argumentsPluginInterface
-  - name: "Download and Execute [Linux]"
+  - name: "Download and Execute [curl] in [Linux/Mac]"
     match:
-      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"] # Supported Payload Types. Available: [EXECUTABLE, DEBUG_EXECUTABLE, SHELLCODE, SERVICE, DLL]
-      arch: ["x64", "x86"] # Supported payload architectures. Available: [x64, x86]
-      platform: ["linux"] # Supported platforms. Available: [windows, linux]
+      type: ["EXECUTABLE", "DEBUG_EXECUTABLE"] # Supported Payload Types. Available: [EXECUTABLE, DEBUG_EXECUTABLE, SHELLCODE, SERVICE, DLL, LIBRARY]
+      arch: ["x64", "x86", "arm64"] # Supported payload architectures. Available: ["x64", "x86", "arm64"]
+      platform: ["linux", "mac"] # Supported platforms. Available: [windows, linux, mac]
     path: "template.multi.curl-exe.sh"
     args:
       - name: url

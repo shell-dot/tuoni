@@ -17,11 +17,17 @@ else
   echo "INFO | tuoni setup set TUONI_BRANCH to: $TUONI_BRANCH ..."
 fi
 
-# TUONI_SUDO_COMMAND default value
+# This standalone installer needs only package-manager and proxy settings under
+# sudo. The child tuoni process selects its own Docker/Compose preservation list.
 if [[ -z "${TUONI_SUDO_COMMAND+x}" ]]; then
   TUONI_SUDO_COMMAND=""
   if command -v "sudo" &>/dev/null; then
-    TUONI_SUDO_COMMAND="sudo -E"
+    TUONI_SUDO_PRESERVE_ENV=(
+      DEBIAN_FRONTEND DEBIAN_PRIORITY DEBCONF_NONINTERACTIVE_SEEN APT_CONFIG NEEDRESTART_MODE
+      http_proxy https_proxy ftp_proxy no_proxy all_proxy
+      HTTP_PROXY HTTPS_PROXY FTP_PROXY NO_PROXY ALL_PROXY SSL_CERT_FILE SSL_CERT_DIR
+    )
+    TUONI_SUDO_COMMAND="sudo --preserve-env=$(IFS=,; printf '%s' "${TUONI_SUDO_PRESERVE_ENV[*]}")"
     echo "INFO | tuoni setup script default TUONI_SUDO_COMMAND to: $TUONI_SUDO_COMMAND ..."
   fi
 else

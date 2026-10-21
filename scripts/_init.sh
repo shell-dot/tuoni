@@ -34,7 +34,7 @@ if [[ -z "${TUONI_SUDO_COMMAND+x}" ]]; then
     )
     # Pass names only; sudo reads their current values at each invocation.
     TUONI_SUDO_COMMAND="sudo --preserve-env=$(IFS=,; printf '%s' "${TUONI_SUDO_PRESERVE_ENV[*]}")"
-    echo "INFO | tuoni default TUONI_SUDO_COMMAND to: $TUONI_SUDO_COMMAND ..."
+    echo "INFO | Using sudo with environment preservation."
   fi
 fi
 

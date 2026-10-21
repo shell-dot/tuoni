@@ -28,7 +28,7 @@ if [[ -z "${TUONI_SUDO_COMMAND+x}" ]]; then
       HTTP_PROXY HTTPS_PROXY FTP_PROXY NO_PROXY ALL_PROXY SSL_CERT_FILE SSL_CERT_DIR
     )
     TUONI_SUDO_COMMAND="sudo --preserve-env=$(IFS=,; printf '%s' "${TUONI_SUDO_PRESERVE_ENV[*]}")"
-    echo "INFO | tuoni setup script default TUONI_SUDO_COMMAND to: $TUONI_SUDO_COMMAND ..."
+    echo "INFO | Using sudo with environment preservation."
   fi
 else
   echo "INFO | tuoni setup script set TUONI_SUDO_COMMAND to: $TUONI_SUDO_COMMAND ..."

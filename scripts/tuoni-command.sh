@@ -138,7 +138,7 @@ $(tput smul)ADDITIONAL INFORMATION:$(tput rmul)
     Tuoni URL:           $(tput setaf 4)https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/$(tput sgr0)
     Tuoni URL Localhost: $(tput setaf 4)https://localhost:${TUONI_CLIENT_PORT}/$(tput sgr0)
     Offline Docs:        $(tput setaf 4)https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/tuoni-docs/$(tput sgr0)
-    Documentation:       $(tput setaf 4)https://docs.shelldot.com/$(tput sgr0)
+    Documentation:       $(tput setaf 4)https://docs.tuoni.io/$(tput sgr0)
     Configuration Path:  $(tput setaf 6)${PROJECT_ROOT}/config/tuoni.yml$(tput sgr0)
 
 For further assistance or to report issues, please visit our documentation or contact support through our website.

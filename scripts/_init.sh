@@ -7,11 +7,33 @@ if [[ "$SILENT" == "1" ]]; then
   echo "INFO | Silent mode enabled, no confirmation prompts ..."
 fi
 
-# TUONI_SUDO_COMMAND default value
+# Use named preservation: sudo-rs on Ubuntu 25.10/26.04 ignores sudo -E.
+# Respect explicit overrides, including an empty string for running without sudo.
 if [[ -z "${TUONI_SUDO_COMMAND+x}" ]]; then
   TUONI_SUDO_COMMAND=""
   if command -v "sudo" &>/dev/null; then
-    TUONI_SUDO_COMMAND="sudo -E"
+    TUONI_SUDO_PRESERVE_ENV=(
+      # Docker's user configuration, credentials and SSH connections.
+      HOME SSH_AUTH_SOCK
+      # Inputs used by docker-compose.yml, including values exported later.
+      VERSION TUONI_CONTAINER_REPO TUONI_DOCKER_IPV6_ENABLED TUONI_HOST_FQDN
+      TUONI_CLIENT_PORT TUONI_CLIENT_LOGGER_ENABLED TUONI_CLIENT_LOGGER_CONSOLE
+      TUONI_CLIENT_LOGGER_LEVEL TUONI_CLIENT_LOGGER_HEADERS
+      # Preserve the selected daemon, TLS requirements and image platform.
+      DOCKER_HOST DOCKER_CONTEXT DOCKER_CONFIG DOCKER_TLS DOCKER_TLS_VERIFY
+      DOCKER_CERT_PATH DOCKER_API_VERSION DOCKER_DEFAULT_PLATFORM DOCKER_CUSTOM_HEADERS
+      DOCKER_BUILDKIT DOCKER_CONTENT_TRUST DOCKER_CONTENT_TRUST_SERVER
+      # Compose project identity and command behavior.
+      COMPOSE_PROJECT_NAME COMPOSE_PROFILES COMPOSE_PARALLEL_LIMIT COMPOSE_COMPATIBILITY
+      COMPOSE_IGNORE_ORPHANS COMPOSE_REMOVE_ORPHANS COMPOSE_ANSI COMPOSE_STATUS_STDOUT
+      COMPOSE_PROGRESS COMPOSE_MENU COMPOSE_EXPERIMENTAL
+      # Package installation and network configuration.
+      DEBIAN_FRONTEND DEBIAN_PRIORITY DEBCONF_NONINTERACTIVE_SEEN APT_CONFIG NEEDRESTART_MODE
+      http_proxy https_proxy ftp_proxy no_proxy all_proxy
+      HTTP_PROXY HTTPS_PROXY FTP_PROXY NO_PROXY ALL_PROXY SSL_CERT_FILE SSL_CERT_DIR
+    )
+    # Pass names only; sudo reads their current values at each invocation.
+    TUONI_SUDO_COMMAND="sudo --preserve-env=$(IFS=,; printf '%s' "${TUONI_SUDO_PRESERVE_ENV[*]}")"
     echo "INFO | tuoni default TUONI_SUDO_COMMAND to: $TUONI_SUDO_COMMAND ..."
   fi
 fi

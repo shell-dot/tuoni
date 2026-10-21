@@ -31,11 +31,11 @@ else
 
      # Rsync the transfer directory
      echo "INFO | deleting remote $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer folder ..."
-     ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo -E rm -rf /srv/tuoni/transfer'
+     ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo rm -rf /srv/tuoni/transfer'
      
      echo "INFO | recreating remote $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer folder ..."
-     ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo -E mkdir /srv/tuoni/transfer'
-     ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo -E chown $(id -u):$(id -g) -R /srv/tuoni/transfer'
+     ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo mkdir /srv/tuoni/transfer'
+     ssh $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST 'sudo chown $(id -u):$(id -g) -R /srv/tuoni/transfer'
 
      echo "INFO | rsyncing $PROJECT_ROOT/transfer/ to $TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer ..."
      rsync -avz --progress "$PROJECT_ROOT/transfer/" "$TRANSFER_REMOTE_USER@$TRANSFER_REMOTE_HOST:/srv/tuoni/transfer"

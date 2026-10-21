@@ -86,10 +86,21 @@ curl https://tuoni.sh | bash
 | `TUONI_REPO` ⚗️             | `https://github.com/shell-dot/tuoni.git` | Source repository override                     |
 | `TUONI_BRANCH` ⚗️           | `main`                                   | Branch to install from                         |
 | `TUONI_VERSION` ⚗️          | _(unset)_                                | Pin a specific version                         |
-| `TUONI_SUDO_COMMAND` ⚗️     | `sudo -E`                                | Override the sudo invocation                   |
+| `TUONI_SUDO_COMMAND` ⚗️     | `sudo --preserve-env=...`                 | Override the sudo invocation (see note below)   |
 | `TUONI_CONTAINER_REPO` ⚗️   | `ghcr.io`                                | Container registry or proxy for pulling images |
 
 > ⚗️ Experimental — intended for development and testing only.
+
+> **Note on `TUONI_SUDO_COMMAND`:** the default uses `sudo --preserve-env=<list>`
+> to retain Tuoni's Compose inputs, Docker connection and TLS settings, Compose
+> project settings, and proxy/package-manager configuration. It works with classic
+> sudo on Ubuntu/Kali and sudo-rs shipped with Ubuntu 25.10/26.04. The standalone
+> installer uses a smaller list for package installation.
+> Do not override it with `sudo -E`: sudo-rs ignores `-E`, causing Compose to lose
+> Tuoni's runtime settings. Custom overrides replace the complete sudo invocation;
+> include all required names in `--preserve-env=VAR1,VAR2` (no spaces). Set
+> `TUONI_SUDO_COMMAND=''` to run without sudo. When adding runtime variables to the
+> Compose file, also add them to the list in `scripts/_init.sh`.
 
 If `wget` or `curl` are not installed, add them first:
 

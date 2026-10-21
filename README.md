@@ -13,7 +13,7 @@
 # Tuoni
 
 [![Discord](https://discordapp.com/api/guilds/1215648074681294918/widget.png?style=shield)](https://discord.gg/fd8caSs8Vj)
-[![Docs](https://img.shields.io/badge/docs-shelldot.com-informational)](https://docs.shelldot.com/)
+[![Docs](https://img.shields.io/badge/docs-tuoni.io-informational)](https://docs.tuoni.io/)
 
 Tuoni is a cross-platform red teaming framework built for cyber defense exercises and security training. It provides a browser-based interface, a modular plugin system, and streamlined reporting — deployed through Docker in minutes.
 
@@ -120,7 +120,7 @@ The `tuoni` CLI manages the running services:
 tuoni help
 ```
 
-Full documentation is at [docs.shelldot.com](https://docs.shelldot.com/).
+Full documentation is at [docs.tuoni.io](https://docs.tuoni.io/).
 
 ---
 

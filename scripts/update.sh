@@ -114,7 +114,7 @@ if [[ $TUONI_CONFIG_VERSION != "$TUONI_GIT_VERSION" ]]; then
 
 else
     echo "INFO | Tuoni is already up to date."
-    if [[ "${TUONI_CONFIG_UPDATED:-0}" == 1 ]]; then
+    if [[ -f "$PROJECT_ROOT/config/.example-state/nginx-restart-required" ]]; then
         echo "INFO | Restarting the client and nginx to load the updated configuration."
         "$PROJECT_ROOT/tuoni" client restart
     fi

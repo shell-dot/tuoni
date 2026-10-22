@@ -126,6 +126,8 @@ $(tput smul)AVAILABLE COMMANDS:$(tput rmul)
     $(tput setaf 3)clean-configuration$(tput sgr0)    Prompt which configuration files to remove and resets them to default.
     $(tput setaf 3)update$(tput sgr0)                 Perform git and docker pull.
     $(tput setaf 3)update-silent$(tput sgr0)          Perform git and docker pull silently.
+                            Both update commands accept --force-config to back up
+                            and replace customized files whose examples changed.
     $(tput setaf 3)update-docker-images$(tput sgr0)   Perform docker pull.
     $(tput setaf 3)update-plugins$(tput sgr0)         Update licenced plugins.
     $(tput setaf 3)export-docker-images$(tput sgr0)   Export docker images to transfer folder.

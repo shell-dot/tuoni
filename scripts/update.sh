@@ -11,11 +11,18 @@ if [[ "$NO_UPDATE" == "1" ]]; then
   return;
 fi
 
+# The environment form also works when upgrading from an older CLI.
+case "${TUONI_SUBCOMMAND:-}" in
+    --force-config) export TUONI_FORCE_CONFIG=1 ;;
+    "") ;;
+    *) echo "ERROR | Unknown update option: $TUONI_SUBCOMMAND" >&2; exit 1 ;;
+esac
+
 # Skip prompt if SILENT is set to 1
 if [[ "$SILENT" != "1" ]]; then
     ### ask for confirmation
     echo -e "\n\n\n\n\n"
-    read -r -p "WARNING | Are you sure you want to start Tuoni update? Tuoni may be restarted. [y/N]" response
+    read -r -p "WARNING | Are you sure you want to start Tuoni update? Tuoni may be restarted. [y/N]" response </dev/tty
     case "$response" in
         [yY][eE][sS]|[yY])
             ;;
@@ -28,8 +35,6 @@ if [[ "$SILENT" != "1" ]]; then
 fi
 
 echo "INFO | Running Tuoni update script ..."
-
-echo "INFO | Running Tuoni update script ..."
 # Update scripts and repo
 cd "$PROJECT_ROOT"
 # TUONI_BRANCH default value if not set in env
@@ -39,6 +44,11 @@ if [[ ! -z "${TUONI_BRANCH+x}" ]]; then
   git switch "${TUONI_BRANCH}"
 fi
 git pull --rebase
+
+# Reconcile changed examples before changing VERSION or containers, including
+# same-version updates. Customized files require review or an explicit override.
+. "$PROJECT_ROOT/scripts/update-configuration.sh"
+tuoni_update_configurations || exit 1
 
 # Function to compare versions
 # Returns 0 if the first version is greater than or equal to the second version
@@ -104,4 +114,8 @@ if [[ $TUONI_CONFIG_VERSION != "$TUONI_GIT_VERSION" ]]; then
 
 else
     echo "INFO | Tuoni is already up to date."
+    if [[ "${TUONI_CONFIG_UPDATED:-0}" == 1 ]]; then
+        echo "INFO | Restarting the client and nginx to load the updated configuration."
+        "$PROJECT_ROOT/tuoni" client restart
+    fi
 fi

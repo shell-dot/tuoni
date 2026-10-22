@@ -1,5 +1,6 @@
 /.idea
 /.github/release-to-discord/node_modules
+/config/.example-state/
 /config/tuoni.env
 /config/tuoni.yml
 /ssl/client/client.crt
@@ -12,6 +13,7 @@
 /data/
 /logs/
 /nginx/tuoni.conf
+/nginx/tuoni.conf.bak.*
 /payload-templates/
 /plugins/server/*
 /plugins/client/*

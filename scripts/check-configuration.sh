@@ -7,26 +7,10 @@ TUONI_ENV_FILE_PATH="$PROJECT_ROOT/config/tuoni.env"
 TUONI_CONFIG_FILE_PATH="$PROJECT_ROOT/config/tuoni.yml"
 TUONI_CONFIG_EXAMPLE_FILE_PATH="$PROJECT_ROOT/config/example/example.tuoni.yml"
 
-# Older updaters keep running their old code after git pull. Reconcile changed
-# examples on their first call into the new CLI, before services are stopped.
-if [[ "${1:-}" == "stop" && -f "$TUONI_ENV_FILE_PATH" ]]; then
-  TUONI_INSTALLED_VERSION=$(sed -nE 's/^[[:space:]]*(export[[:space:]]+)?VERSION=[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*$/\2/p' "$TUONI_ENV_FILE_PATH")
-  TUONI_CHECKOUT_VERSION=$(sed -nE 's/^version:[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*$/\1/p' "$PROJECT_ROOT/version.yml")
-  if [[ -n "$TUONI_INSTALLED_VERSION" && -n "$TUONI_CHECKOUT_VERSION" && "$TUONI_INSTALLED_VERSION" != "$TUONI_CHECKOUT_VERSION" ]]; then
-    . "$PROJECT_ROOT/scripts/update-configuration.sh"
-    tuoni_update_configurations || exit 1
-  fi
-fi
-
 # Check if tuoni.env file exists, create if not
 if [ ! -f "$TUONI_ENV_FILE_PATH" ]; then
   echo "INFO | config/tuoni.env file not found, creating ..."
   cp $PROJECT_ROOT/config/example/example.tuoni.env ${TUONI_ENV_FILE_PATH}
-fi
-
-# Use the Tuoni version from env
-if [[ ! -z "${TUONI_VERSION+x}" ]]; then
-  sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION}/g" ${TUONI_ENV_FILE_PATH}
 fi
 
 # Check if TUONI_CONTAINER_REPO variable is set, update tuoni.env file if it is
@@ -88,6 +72,29 @@ fi
 if [[ ! $($PROJECT_ROOT/scripts/tools/yq '.client.port' $TUONI_CONFIG_FILE_PATH) =~ ^[0-9]+$ ]]; then
   echo "INFO | 'client' attribute is missing or invalid in config, adding ..."
   $PROJECT_ROOT/scripts/tools/yq '.client = load("'$TUONI_CONFIG_EXAMPLE_FILE_PATH'").client' --inplace $TUONI_CONFIG_FILE_PATH
+fi
+
+# The old pinned updater can skip stop entirely after overwriting VERSION.
+# Reconcile on startup too, regardless of the version or saved example state.
+case "${1:-}:${2:-}" in
+  start:*|restart:*|client:start|client:restart)
+    . "$PROJECT_ROOT/scripts/update-configuration.sh"
+    tuoni_update_configurations || exit 1
+    ;;
+  stop:*)
+    # Preserve the pre-stop handoff for unpinned legacy release upgrades.
+    TUONI_INSTALLED_VERSION=$(sed -nE 's/^[[:space:]]*(export[[:space:]]+)?VERSION=[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*$/\2/p' "$TUONI_ENV_FILE_PATH")
+    TUONI_CHECKOUT_VERSION=$(sed -nE 's/^version:[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*$/\1/p' "$PROJECT_ROOT/version.yml")
+    if [[ -n "$TUONI_INSTALLED_VERSION" && -n "$TUONI_CHECKOUT_VERSION" && "$TUONI_INSTALLED_VERSION" != "$TUONI_CHECKOUT_VERSION" ]]; then
+      . "$PROJECT_ROOT/scripts/update-configuration.sh"
+      tuoni_update_configurations || exit 1
+    fi
+    ;;
+esac
+
+# Apply a requested image version only after startup configuration is accepted.
+if [[ ! -z "${TUONI_VERSION+x}" ]]; then
+  sed -i "s/VERSION=.*/VERSION=${TUONI_VERSION}/g" "$TUONI_ENV_FILE_PATH"
 fi
 
 # Ensure necessary directories exist
@@ -156,9 +163,8 @@ fi
 # Ensure nginx configuration file exists
 if [ ! -f "$PROJECT_ROOT/nginx/tuoni.conf" ]; then
   echo "INFO | nginx/tuoni.conf file not found, creating ..."
-  cp $PROJECT_ROOT/nginx/example/example.tuoni.conf $PROJECT_ROOT/nginx/tuoni.conf
   . "$PROJECT_ROOT/scripts/update-configuration.sh"
-  tuoni_record_example nginx/example/example.tuoni.conf
+  tuoni_update_configurations || exit 1
 fi
 
 # Update nginx listen port from tuoni config file

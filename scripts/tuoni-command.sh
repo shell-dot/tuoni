@@ -23,6 +23,22 @@ if [ "$TUONI_COMPONENT" == "tuoni" ]; then
   TUONI_COMPONENT="app"
 fi
 
+# Reconciliation can happen in a different process from startup. Keep this
+# marker until nginx has actually been recreated and accepts its configuration.
+tuoni_apply_pending_nginx_configuration() {
+    local already_recreated="${1:-0}"
+    local pending="$PROJECT_ROOT/config/.example-state/nginx-restart-required"
+    [[ -f "$pending" ]] || return 0
+    if [[ "$already_recreated" != 1 ]]; then
+        echo "INFO | Recreating nginx to load the accepted configuration."
+        ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} \
+            up --detach --no-deps --force-recreate tuoni-client-nginx || return 1
+    fi
+    ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} \
+        exec -T tuoni-client-nginx nginx -t || return 1
+    rm -- "$pending"
+}
+
 # Function to handle client commands
 handle_client_command() {
     local command="$1"
@@ -30,6 +46,7 @@ handle_client_command() {
         start)
             echo "INFO | Starting client ..."
             ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
+            tuoni_apply_pending_nginx_configuration
             ;;
         stop)
             echo "INFO | Stopping client ..."
@@ -38,6 +55,7 @@ handle_client_command() {
         restart)
             echo "INFO | Restarting client ..."
             ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=client ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
+            tuoni_apply_pending_nginx_configuration 1
             ;;
         logs)
             echo "INFO | Showing client logs ..."
@@ -289,6 +307,7 @@ fi
 
 if [ "$TUONI_COMMAND" == "start" ]; then
   ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach
+  tuoni_apply_pending_nginx_configuration
   echo "INFO | Tuoni url: https://${TUONI_HOST_FQDN}:${TUONI_CLIENT_PORT}/"
 fi
 
@@ -298,6 +317,7 @@ fi
 
 if [ "$TUONI_COMMAND" == "restart" ]; then
   ${TUONI_SUDO_COMMAND} env COMPOSE_PROFILES=${TUONI_COMPONENT} ${TUONI_DOCKER_COMPOSE_COMMAND} up --detach --force-recreate
+  tuoni_apply_pending_nginx_configuration 1
 fi
 
 if [ "$TUONI_COMMAND" == "client" ]; then

@@ -68,7 +68,8 @@ Running the installer again will update Tuoni to the latest version. The Tuoni s
 ### Configuration changes during upgrades
 
 Upgrades reconcile managed configuration files with changes to their examples
-before stopping services or changing the installed version. Currently this covers
+before stopping services. Application and client `start` and `restart` commands
+also reconcile configuration before starting containers. Currently this covers
 `nginx/tuoni.conf` and `nginx/example/example.tuoni.conf`. It applies to any example
 change, including the WebSocket proxy headers required by newer clients; those
 headers remain compatible with client **0.16.1**.
@@ -78,13 +79,15 @@ headers remain compatible with client **0.16.1**.
 | Example unchanged | Preserve the active file, including customizations. |
 | Example changed; active file matches the previous example | Back up the active file and install the new example automatically, including in silent mode. |
 | Example changed; active file was customized | Prompt to **replace**, **keep**, or **abort** (default). Silent upgrades fail unless forced. |
-| Previous example unavailable | Require the same review or force override, unless the active file already matches the new example. |
+| Previous example unavailable or unverified | Recognize defaults from local release tags; otherwise require review or force, unless the active file already matches the new example. |
 
 The listen port from `config/tuoni.yml` is preserved. Configuration-only updates
 restart the client and nginx. Choosing **keep** acknowledges the new example;
 you must merge required changes yourself, and the same example will not prompt
-again. Aborting preserves the active file and running services, but does not undo
-the Git pull.
+again. Keeping a customized file means you have checked that it includes changes
+required by the new release. Aborting preserves the active file and running
+services, but does not undo the Git pull or a version change already made by an
+older updater.
 
 To back up and replace conflicting files during a silent upgrade:
 
@@ -102,6 +105,42 @@ curl https://tuoni.sh | SILENT=1 TUONI_FORCE_CONFIG=1 bash
 **Force replaces the entire conflicting file; it does not merge customizations.**
 Each replacement saves the original as `nginx/tuoni.conf.bak.<unique suffix>`.
 Unchanged examples still preserve customizations, even with force enabled.
+
+#### Pinned upgrades and recovery from 0.16.1
+
+The 0.16.1 CLI can write `TUONI_VERSION` into `config/tuoni.env` before pulling
+new scripts, then skip its upgrade steps because the versions already match.
+The installer's final `tuoni start` now checks the active nginx file independently
+of those version values. It recognizes old shipped defaults by comparing their
+contents with examples from local release tags, retaining the configured port.
+This also repairs stock 0.16.1 files on installations already marked as 0.17.0.
+
+Accepted examples are recorded in `config/.example-state/v2/`. Older snapshots
+are rechecked because they may have recorded the new example without updating
+the active file. A customized file may therefore need a one-time review, even
+if the old updater reported success. Silent operation fails until that review
+or an explicit force replacement; it does not silently discard customizations.
+
+Once the checkout contains these updated scripts, recover an existing
+installation with:
+
+```bash
+cd /srv/tuoni
+SILENT=1 ./tuoni start
+```
+
+If a customized file blocks recovery, manually merge the required changes and
+run `./tuoni start` interactively to review it, or authorize a full replacement:
+
+```bash
+SILENT=1 TUONI_FORCE_CONFIG=1 ./tuoni start
+```
+
+Required nginx restarts are recorded on disk before configuration changes and
+cleared only after nginx is recreated and `nginx -t` succeeds. If startup fails
+or is interrupted, rerunning `tuoni start` retries the pending restart. A direct
+update started by the old CLI still needs a subsequent `tuoni start` to execute
+the new startup checks; the installer already performs that step.
 
 ### Silent / Automated Install
 

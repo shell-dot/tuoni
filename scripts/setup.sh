@@ -56,6 +56,10 @@ elif [[ "$NO_UPDATE" == "1" ]]; then
 else
   echo "INFO | tuoni directory already exists. Updating ..."
   cd /srv/tuoni
-  ./tuoni update-silent
+  if [[ "$SILENT" == "1" ]]; then
+    ./tuoni update-silent
+  else
+    ./tuoni update
+  fi
   ./tuoni start
 fi

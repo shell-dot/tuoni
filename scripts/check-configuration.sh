@@ -7,6 +7,17 @@ TUONI_ENV_FILE_PATH="$PROJECT_ROOT/config/tuoni.env"
 TUONI_CONFIG_FILE_PATH="$PROJECT_ROOT/config/tuoni.yml"
 TUONI_CONFIG_EXAMPLE_FILE_PATH="$PROJECT_ROOT/config/example/example.tuoni.yml"
 
+# Older updaters keep running their old code after git pull. Reconcile changed
+# examples on their first call into the new CLI, before services are stopped.
+if [[ "${1:-}" == "stop" && -f "$TUONI_ENV_FILE_PATH" ]]; then
+  TUONI_INSTALLED_VERSION=$(sed -nE 's/^[[:space:]]*(export[[:space:]]+)?VERSION=[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*$/\2/p' "$TUONI_ENV_FILE_PATH")
+  TUONI_CHECKOUT_VERSION=$(sed -nE 's/^version:[^0-9]*([0-9]+\.[0-9]+\.[0-9]+).*$/\1/p' "$PROJECT_ROOT/version.yml")
+  if [[ -n "$TUONI_INSTALLED_VERSION" && -n "$TUONI_CHECKOUT_VERSION" && "$TUONI_INSTALLED_VERSION" != "$TUONI_CHECKOUT_VERSION" ]]; then
+    . "$PROJECT_ROOT/scripts/update-configuration.sh"
+    tuoni_update_configurations || exit 1
+  fi
+fi
+
 # Check if tuoni.env file exists, create if not
 if [ ! -f "$TUONI_ENV_FILE_PATH" ]; then
   echo "INFO | config/tuoni.env file not found, creating ..."
@@ -146,6 +157,8 @@ fi
 if [ ! -f "$PROJECT_ROOT/nginx/tuoni.conf" ]; then
   echo "INFO | nginx/tuoni.conf file not found, creating ..."
   cp $PROJECT_ROOT/nginx/example/example.tuoni.conf $PROJECT_ROOT/nginx/tuoni.conf
+  . "$PROJECT_ROOT/scripts/update-configuration.sh"
+  tuoni_record_example nginx/example/example.tuoni.conf
 fi
 
 # Update nginx listen port from tuoni config file

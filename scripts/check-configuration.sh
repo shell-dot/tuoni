@@ -98,7 +98,7 @@ if [[ ! -z "${TUONI_VERSION+x}" ]]; then
 fi
 
 # Ensure necessary directories exist
-for dir in data logs/server logs/client logs/nginx payload-templates plugins transfer; do
+for dir in data logs/server logs/client logs/nginx payload-templates plugins transfer python-site-packages; do
   if [ ! -d "$PROJECT_ROOT/$dir" ]; then
     echo "INFO | $dir directory not found, creating ..."
     mkdir -p "$PROJECT_ROOT/$dir"

@@ -23,7 +23,8 @@ tuoni_commands_array=(
     "import-tuoni-package" \
     "client" \
     "server" \
-    "docs"
+    "docs" \
+    "pip"
 )
 
 tuoni_client_commands_array=("start" "stop" "restart" "logs")
